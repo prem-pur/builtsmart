@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Manager Sidebar Fragment -->
+<div th:fragment="managerSidebar(user, activePage)">
+    <aside class="sidebar">
+        <div class="brand"><span class="dot"></span> BuildSmart</div>
+        <div class="nav">
+            <a th:classappend="${activePage == 'dashboard' ? ' active' : ''}" href="/dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a th:classappend="${activePage == 'projects' ? ' active' : ''}" href="/manager/projects"><i class="fa-solid fa-diagram-project"></i> Projects</a>
+            <a th:classappend="${activePage == 'tasks' ? ' active' : ''}" href="/manager/tasks"><i class="fa-solid fa-list-check"></i> Tasks</a>
+            <a th:classappend="${activePage == 'workers' ? ' active' : ''}" href="/manager/workers"><i class="fa-solid fa-users"></i> Team</a>
+            <a th:classappend="${activePage == 'inquiries' ? ' active' : ''}" href="/manager/inquiries"><i class="fa-solid fa-envelope"></i> Inquiries</a>
+            <div class="muted">General</div>
+            <a href="/manager/profile"><i class="fa-solid fa-user-gear"></i> Profile</a>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+        <div class="user-mini mt-3">
+            <img src="https://ui-avatars.com/api/?background=C5211C&color=fff&name=User" th:attr="src=${user != null ? 'https://ui-avatars.com/api/?background=C5211C&color=fff&name=' + #strings.replace(user.name != null ? user.name : 'User',' ','+') : 'https://ui-avatars.com/api/?background=C5211C&color=fff&name=User'}" alt="avatar">
+            <div>
+                <div th:text="${user != null ? user.name : 'User'}">User</div>
+                <small class="text-muted" th:text="${user != null ? user.role : 'Role'}">Role</small>
+            </div>
+        </div>
+    </aside>
+</div>
+</body>
+</html>

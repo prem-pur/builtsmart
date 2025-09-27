@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Manager Dashboard - BuildSmart CMS</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom Dashboard CSS -->
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: managerSidebar(user=${user}, activePage='dashboard')}"></div>
+
+        <!-- Main -->
+        <main class="stack">
+            <!-- Header -->
+            <div class="header">
+                <div class="search">
+                    <i class="fa-solid fa-magnifying-glass icon"></i>
+                    <input type="text" placeholder="Search projects, tasks, people...">
+                </div>
+                <div class="header-actions">
+                    <a class="icon-btn" href="/manager/tasks/new" title="New Task"><i class="fa-solid fa-plus"></i></a>
+                    <div class="icon-btn"><i class="fa-regular fa-bell"></i></div>
+                </div>
+            </div>
+
+            <!-- Hero Greeting -->
+            <section class="hero">
+                <h2>Good day, <span th:text="${user.name}">Manager</span> 👋</h2>
+                <p>Plan, prioritize, and accomplish your projects with ease.</p>
+                <div class="cta">
+                    <a class="btn-primary" href="/manager/projects"><i class="fa-solid fa-diagram-project me-1"></i> View Projects</a>
+                </div>
+            </section>
+
+            <!-- KPI Grid -->
+            <section class="grid">
+                <div class="card kpi">
+                    <div class="pill pill-blue"><i class="fa-solid fa-diagram-project"></i></div>
+                    <div>
+                        <h3 id="activeProjectsCount" th:text="${activeProjectsCount}">8</h3>
+                        <small class="text-muted">Active Projects</small>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="pill pill-green"><i class="fa-solid fa-users"></i></div>
+                    <div>
+                        <h3 id="totalWorkersCount" th:text="${totalWorkers}">45</h3>
+                        <small class="text-muted">Total Workers</small>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="pill pill-amber"><i class="fa-solid fa-list-check"></i></div>
+                    <div>
+                        <h3 id="pendingTasksCount" th:text="${pendingTasksCount}">12</h3>
+                        <small class="text-muted">Pending Tasks</small>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="pill pill-gray"><i class="fa-regular fa-clipboard"></i></div>
+                    <div>
+                        <h3 id="recentLogsCount" th:text="${recentLogsCount}">5</h3>
+                        <small class="text-muted">Site Updates</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick filters (chips) -->
+            <section class="chips">
+                <div class="chip active"><span class="dot" style="background:#6c5ce7"></span> Overview</div>
+                <a class="chip" href="/manager/projects"><span class="dot" style="background:#3b82f6"></span> Projects</a>
+                <a class="chip" href="/manager/tasks"><span class="dot" style="background:#f59e0b"></span> Tasks</a>
+                <a class="chip" href="/manager/workers"><span class="dot" style="background:#22c55e"></span> Team</a>
+            </section>
+
+            <!-- Content Grid -->
+            <section class="content">
+                <div class="stack">
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fa-solid fa-chart-line me-1"></i> Project Progress Overview</h5>
+                            <span class="badge info">Live</span>
+                        </div>
+                        <canvas id="projectProgressChart" height="160"></canvas>
+                    </div>
+
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fa-regular fa-bell me-1"></i> Recent Site Updates</h5>
+                        </div>
+                        <div class="list">
+                            <div th:if="${recentLogs.empty}" class="text-muted text-center">No recent updates</div>
+                            <div th:each="log : ${recentLogs}" class="item">
+                                <div class="left">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div class="fw-semibold" th:text="${log.type}">Update Type</div>
+                                        <small class="text-muted" th:text="${#temporals.format(log.createdAt, 'dd MMM yyyy')}">Date</small>
+                                    </div>
+                                </div>
+                                <small class="text-muted" th:text="${log.submittedBy != null ? log.submittedBy.name : 'System'}">Author</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stack">
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fa-regular fa-calendar me-1"></i> Upcoming Deadlines</h5>
+                        </div>
+                        <div class="list">
+                            <div th:if="${upcomingDeadlines.empty}" class="text-muted text-center">No upcoming deadlines</div>
+                            <div th:each="task : ${upcomingDeadlines}" class="item">
+                                <div class="left">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div class="fw-semibold" th:text="${task.description}">Task</div>
+                                        <small class="text-muted" th:text="${task.project?.name}">Project</small>
+                                    </div>
+                                </div>
+                                <span th:if="${task.deadline != null}"
+                                      th:with="daysLeft=${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), task.deadline)}"
+                                      class="badge"
+                                      th:classappend="${(daysLeft <= 1) ? ' warn' : ' success'}"
+                                      th:text="${daysLeft + ' days'}">3 days</span>
+                                <span th:unless="${task.deadline != null}" class="badge">No deadline</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fa-solid fa-circle-notch me-1"></i> Overall Completion</h5>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="donut">
+                                <svg width="130" height="130">
+                                    <circle cx="65" cy="65" r="52" stroke="#eef2ff" stroke-width="12" fill="none"></circle>
+                                    <circle cx="65" cy="65" r="52" stroke="#6c5ce7" stroke-width="12" stroke-linecap="round" fill="none"
+                                            th:attr="stroke-dasharray=${((completedCount + inProgressCount + planningCount + onHoldCount + cancelledCount) > 0 ? ((completedCount * 326) / (completedCount + inProgressCount + planningCount + onHoldCount + cancelledCount)) : 0) + ',326'}"></circle>
+                                </svg>
+                                <div class="number" th:text="${(completedCount + inProgressCount + planningCount + onHoldCount + cancelledCount) > 0 ? (completedCount * 100 / (completedCount + inProgressCount + planningCount + onHoldCount + cancelledCount)) + '%' : '0%'}">41%</div>
+                            </div>
+                            <div>
+                                <div class="badge success">Completed</div>
+                                <div class="badge info mt-2">In Progress</div>
+                                <div class="badge mt-2">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- Project List Widget (Live) -->
+                    <div class="card widget">
+                        <div class="title">
+                            <h6><i class="fa-solid fa-layer-group me-1"></i> Projects</h6>
+                            <a class="badge" href="/manager/projects">See all</a>
+                        </div>
+                        <div class="project-list">
+                            <div th:if="${#lists.isEmpty(recentProjects)}" class="text-muted text-center py-2">No projects to show</div>
+                            <div class="project-item" th:each="p : ${recentProjects}">
+                                <div class="left">
+                                    <span class="status-dot"
+                                          th:classappend="${p.status.name() == 'COMPLETED' ? ' status-green' :
+                                                           (p.status.name() == 'ON_HOLD' || p.status.name() == 'CANCELLED') ? ' status-amber' :
+                                                           ' status-blue'}"></span>
+                                    <span th:text="${p.name}">Project Name</span>
+                                </div>
+                                <small class="text-muted" th:text="${p.status}">Status</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Project Progress Chart with real data
+        const ctx = document.getElementById('projectProgressChart').getContext('2d');
+        
+        const projectStatusData = {
+            labels: ['Completed', 'In Progress', 'Planning', 'On Hold', 'Cancelled'],
+            datasets: [{
+                data: [
+                    parseInt('[[${completedCount}]]') || 0,
+                    parseInt('[[${inProgressCount}]]') || 0,
+                    parseInt('[[${planningCount}]]') || 0,
+                    parseInt('[[${onHoldCount}]]') || 0,
+                    parseInt('[[${cancelledCount}]]') || 0
+                ],
+                backgroundColor: [
+                    '#28a745',
+                    '#007bff',
+                    '#ffc107',
+                    '#dc3545',
+                    '#6c757d'
+                ]
+            }]
+        };
+        
+        const projectStatusChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: projectStatusData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Auto-refresh dashboard statistics every 30 seconds
+        // Micro-animation for number counters
+        function animateCount(el, to) {
+            const from = parseInt(el.textContent) || 0;
+            const duration = 600;
+            const start = performance.now();
+            function tick(now) {
+                const p = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - p, 3);
+                const val = Math.round(from + (to - from) * eased);
+                el.textContent = val;
+                if (p < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        function refreshDashboardStats() {
+            fetch('/api/dashboard/manager-stats')
+                .then(response => response.json())
+                .then(data => {
+                    animateCount(document.getElementById('activeProjectsCount'), data.activeProjectsCount);
+                    animateCount(document.getElementById('totalWorkersCount'), data.totalWorkers);
+                    animateCount(document.getElementById('pendingTasksCount'), data.pendingTasksCount);
+                    animateCount(document.getElementById('recentLogsCount'), data.recentLogsCount);
+
+                    // Update chart dataset with live values
+                    if (projectStatusChart) {
+                        projectStatusChart.data.datasets[0].data = [
+                            data.completedCount || 0,
+                            data.inProgressCount || 0,
+                            data.planningCount || 0,
+                            data.onHoldCount || 0,
+                            data.cancelledCount || 0
+                        ];
+                        projectStatusChart.update();
+                    }
+                })
+                .catch(error => console.error('Error refreshing stats:', error));
+        }
+
+        // Refresh stats every 30 seconds
+        setInterval(refreshDashboardStats, 30000);
+
+        // Also refresh when user becomes active (returns to tab)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                refreshDashboardStats();
+            }
+        });
+
+        // Initial load with animation from current values
+        refreshDashboardStats();
+    </script>
+</body>
+</html>

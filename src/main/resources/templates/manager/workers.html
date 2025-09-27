@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workers - BuildSmart CMS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap / Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Shared Manager Theme -->
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <div th:replace="~{fragments/sidebar :: managerSidebar(user=${user}, activePage='workers')}"></div>
+        <main class="stack">
+            <div class="card">
+                <div>
+                    <h4 class="mb-1"><i class="fas fa-users me-2"></i>Workers Management</h4>
+                    <p class="text-muted mb-0">View and manage construction workers</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title">
+                    <h5><i class="fas fa-list me-1"></i> All Workers</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="worker : ${workers}">
+                                <td th:text="${worker.name}">Worker Name</td>
+                                <td th:text="${worker.email}">Email</td>
+                                <td th:text="${worker.phone}">Phone</td>
+                                <td th:text="${worker.department}">Department</td>
+                                <td>
+                                    <span th:class="${worker.active} ? 'badge success' : 'badge warn'"
+                                          th:text="${worker.active} ? 'Active' : 'Inactive'">Status</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/manager/workers/{id}(id=${worker.id})}" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
