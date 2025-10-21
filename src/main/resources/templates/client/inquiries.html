@@ -3,98 +3,181 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Inquiries - Client</title>
+  <title>My Inquiries - BuildSmart CMS</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <!-- Manager Dashboard CSS -->
+  <link href="/css/manager-dashboard.css" rel="stylesheet">
+  <link href="/css/toast-notifications.css" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-    <div class="container">
-      <a class="navbar-brand" href="/dashboard"><i class="fas fa-hard-hat"></i> BuildSmart CMS</a>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="/client/projects"><i class="fas fa-project-diagram"></i> My Projects</a></li>
-          <li class="nav-item"><a class="nav-link" href="/client/invoices"><i class="fas fa-file-invoice"></i> Invoices</a></li>
-          <li class="nav-item"><a class="nav-link" href="/client/reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/client/inquiries"><i class="fas fa-envelope"></i> Inquiries</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <div class="app">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: clientSidebar(user=${user}, activePage='inquiries')}"></div>
 
-  <div class="container py-4">
-    <div class="row g-4">
-      <div class="col-lg-6">
-        <div class="card">
-          <div class="card-header"><i class="fa-solid fa-paper-plane me-2"></i>Send a new inquiry</div>
-          <div class="card-body">
-            <form method="post" th:action="@{/client/inquiries}">
-              <div class="mb-3">
-                <label class="form-label">Your Name</label>
-                <input class="form-control" name="clientName" th:value="${prefillName}" disabled>
-                <div class="form-text">Pulled from your profile</div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Your Email</label>
-                <input class="form-control" name="clientEmail" th:value="${prefillEmail}" disabled>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Subject</label>
-                <input class="form-control" name="subject" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Message</label>
-                <textarea class="form-control" name="message" rows="5" required></textarea>
-              </div>
-              <button class="btn btn-secondary" type="submit">Submit</button>
-            </form>
+    <!-- Main Content -->
+    <main class="stack">
+
+      <!-- Page Header -->
+      <div class="card">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-1">My Inquiries</h4>
+            <p class="text-muted mb-0">Send inquiries and track responses from our team</p>
           </div>
         </div>
       </div>
-      <div class="col-lg-6">
-        <div class="card">
-          <div class="card-header"><i class="fa-solid fa-inbox me-2"></i>My inquiries</div>
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead>
-                <tr>
-                  <th>Created</th>
-                  <th>Subject</th>
-                  <th>Status</th>
-                  <th>Response</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr th:each="inq : ${myInquiries}">
-                  <td th:text="${inq.createdAt != null ? #temporals.format(inq.createdAt, 'dd MMM yyyy HH:mm') : '—'}">date</td>
-                  <td th:text="${inq.subject}">subject</td>
-                  <td>
-                    <span class="badge" th:classappend="${inq.status != null and inq.status.name() == 'OPEN' ? ' bg-warning' : ' bg-success'}" th:text="${inq.status}">OPEN</span>
-                  </td>
-                  <td>
-                    <button class="btn btn-sm btn-outline-info" type="button" data-bs-toggle="collapse" th:attr="data-bs-target=${'#resp-' + inq.id}">View</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+
+      <!-- Content Grid -->
+      <div class="row g-3">
+        <!-- Send New Inquiry -->
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="section-title">
+              <h5><i class="fas fa-paper-plane me-1"></i> Send New Inquiry</h5>
+            </div>
+            <form method="post" th:action="@{/client/inquiries}" data-validate>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Your Name</label>
+                <input class="form-control" name="clientName" th:value="${prefillName}" disabled>
+                <small class="text-muted">Pulled from your profile</small>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Your Email</label>
+                <input class="form-control" name="clientEmail" th:value="${prefillEmail}" disabled>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Subject <span class="text-danger">*</span></label>
+                <input class="form-control" name="subject" placeholder="Enter inquiry subject" required minlength="5">
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Message <span class="text-danger">*</span></label>
+                <textarea class="form-control" name="message" rows="5" placeholder="Describe your inquiry..." required minlength="10"></textarea>
+              </div>
+              <button class="btn btn-primary" type="submit">
+                <i class="fas fa-paper-plane me-1"></i> Submit Inquiry
+              </button>
+            </form>
           </div>
-          <div class="p-3">
-            <div th:each="inq : ${myInquiries}" class="collapse" th:id="${'resp-' + inq.id}">
-              <div class="border rounded p-3">
-                <div class="mb-2"><strong>Your message</strong></div>
-                <div class="mb-3" th:text="${inq.message}">message</div>
-                <div class="mb-2"><strong>Response</strong></div>
-                <div th:if="${inq.responseText != null}" th:text="${inq.responseText}">Response here</div>
-                <div th:if="${inq.responseText == null}" class="text-muted">No response yet</div>
+        </div>
+
+        <!-- My Inquiries List -->
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="section-title">
+              <h5><i class="fas fa-inbox me-1"></i> My Inquiries</h5>
+              <span class="badge info" th:text="${#lists.size(myInquiries)} + ' Total'">0 Total</span>
+            </div>
+            
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(myInquiries)}" class="text-center py-5">
+              <i class="fas fa-envelope-open-text fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No inquiries yet. Send your first inquiry!</p>
+            </div>
+
+            <!-- Inquiries Table -->
+            <div th:unless="${#lists.isEmpty(myInquiries)}" class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="inq : ${myInquiries}">
+                    <td data-label="Date">
+                      <small th:text="${inq.createdAt != null ? #temporals.format(inq.createdAt, 'dd MMM yyyy') : '—'}">date</small>
+                    </td>
+                    <td data-label="Subject">
+                      <strong th:text="${inq.subject}">subject</strong>
+                    </td>
+                    <td data-label="Status">
+                      <span class="badge" 
+                            th:classappend="${inq.status != null and inq.status.toString() == 'OPEN' ? ' warning' : ' success'}" 
+                            th:text="${inq.status}">OPEN</span>
+                    </td>
+                    <td data-label="Actions">
+                      <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-info" 
+                                type="button" 
+                                data-bs-toggle="collapse" 
+                                th:attr="data-bs-target=${'#resp-' + inq.id}"
+                                title="View Details">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <form method="post" 
+                              th:action="@{/client/inquiries/{id}/delete(id=${inq.id})}" 
+                              style="display: inline;"
+                              onsubmit="return confirm('Are you sure you want to delete this inquiry?');">
+                          <button type="submit" 
+                                  class="btn btn-outline-danger btn-sm" 
+                                  title="Delete Inquiry">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Collapsible Details -->
+            <div class="p-3" th:unless="${#lists.isEmpty(myInquiries)}">
+              <div th:each="inq : ${myInquiries}" class="collapse" th:id="${'resp-' + inq.id}">
+                <div class="border rounded p-3 bg-light">
+                  <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                      <i class="fas fa-user-circle me-2 text-primary"></i>
+                      <strong>Your Message</strong>
+                    </div>
+                    <p class="mb-0" th:text="${inq.message}">message</p>
+                  </div>
+                  <hr>
+                  <div>
+                    <div class="d-flex align-items-center mb-2">
+                      <i class="fas fa-reply me-2 text-success"></i>
+                      <strong>Response</strong>
+                    </div>
+                    <p th:if="${inq.responseText != null}" class="mb-0" th:text="${inq.responseText}">Response here</p>
+                    <p th:if="${inq.responseText == null}" class="text-muted mb-0">
+                      <i class="fas fa-clock me-1"></i> Awaiting response from our team
+                    </p>
+                    <small th:if="${inq.respondedAt != null}" class="text-muted d-block mt-2">
+                      <i class="fas fa-calendar me-1"></i>
+                      Responded on <span th:text="${#temporals.format(inq.respondedAt, 'dd MMM yyyy HH:mm')}">date</span>
+                    </small>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Toast Notifications -->
+  <script src="/js/toast.js"></script>
+  <!-- Mobile Navigation -->
+  <script src="/js/mobile-nav.js"></script>
+  <!-- Form Validation -->
+  <script src="/js/form-validation.js"></script>
+  
+  <script th:if="${param.success}">
+    toast.success('Success!', 'Your inquiry has been submitted successfully');
+  </script>
 </body>
 </html>

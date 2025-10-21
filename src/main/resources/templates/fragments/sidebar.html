@@ -11,16 +11,92 @@
             <a th:classappend="${activePage == 'tasks' ? ' active' : ''}" href="/manager/tasks"><i class="fa-solid fa-list-check"></i> Tasks</a>
             <a th:classappend="${activePage == 'workers' ? ' active' : ''}" href="/manager/workers"><i class="fa-solid fa-users"></i> Team</a>
             <a th:classappend="${activePage == 'inquiries' ? ' active' : ''}" href="/manager/inquiries"><i class="fa-solid fa-envelope"></i> Inquiries</a>
+            <a th:classappend="${activePage == 'attendance' ? ' active' : ''}" href="/manager/attendance"><i class="fa-solid fa-clipboard-check"></i> Attendance</a>
+            <a th:classappend="${activePage == 'leave' ? ' active' : ''}" href="/manager/leave"><i class="fa-solid fa-calendar-times"></i> Leave</a>
             <div class="muted">General</div>
-            <a href="/manager/profile"><i class="fa-solid fa-user-gear"></i> Profile</a>
             <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
-        <div class="user-mini mt-3">
-            <img src="https://ui-avatars.com/api/?background=C5211C&color=fff&name=User" th:attr="src=${user != null ? 'https://ui-avatars.com/api/?background=C5211C&color=fff&name=' + #strings.replace(user.name != null ? user.name : 'User',' ','+') : 'https://ui-avatars.com/api/?background=C5211C&color=fff&name=User'}" alt="avatar">
-            <div>
-                <div th:text="${user != null ? user.name : 'User'}">User</div>
-                <small class="text-muted" th:text="${user != null ? user.role : 'Role'}">Role</small>
-            </div>
+    </aside>
+</div>
+
+<!-- Engineer Sidebar Fragment -->
+<div th:fragment="engineerSidebar(user, activePage)">
+    <aside class="sidebar">
+        <div class="brand"><span class="dot"></span> BuildSmart</div>
+        <div class="nav">
+            <a th:classappend="${activePage == 'dashboard' ? ' active' : ''}" href="/engineer/dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a th:classappend="${activePage == 'logs' ? ' active' : ''}" href="/engineer/logs"><i class="fa-solid fa-clipboard-list"></i> Site Logs</a>
+            <a th:classappend="${activePage == 'issues' ? ' active' : ''}" href="/engineer/issues"><i class="fa-solid fa-triangle-exclamation"></i> Issues</a>
+            <a th:classappend="${activePage == 'tasks' ? ' active' : ''}" href="/engineer/tasks"><i class="fa-solid fa-list-check"></i> My Tasks</a>
+            <a th:classappend="${activePage == 'progress' ? ' active' : ''}" href="/engineer/progress"><i class="fa-solid fa-chart-line"></i> Progress</a>
+            <a th:classappend="${activePage == 'reports' ? ' active' : ''}" href="/engineer/reports"><i class="fa-solid fa-chart-bar"></i> Reports</a>
+            <a th:classappend="${activePage == 'attendance' ? ' active' : ''}" href="/engineer/attendance"><i class="fa-solid fa-clipboard-check"></i> Attendance</a>
+            <a th:classappend="${activePage == 'leave' ? ' active' : ''}" href="/engineer/leave"><i class="fa-solid fa-calendar-times"></i> Leave</a>
+            <div class="muted">General</div>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </aside>
+</div>
+
+<!-- Finance Sidebar Fragment -->
+<div th:fragment="financeSidebar(user, activePage)">
+    <aside class="sidebar">
+        <div class="brand"><span class="dot"></span> BuildSmart</div>
+        <div class="nav">
+            <a th:classappend="${activePage == 'dashboard' ? ' active' : ''}" href="/finance/dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a th:classappend="${activePage == 'expenses' ? ' active' : ''}" href="/finance/expenses"><i class="fa-solid fa-receipt"></i> Expenses</a>
+            <a th:classappend="${activePage == 'reminders' ? ' active' : ''}" href="/finance/reminders"><i class="fa-solid fa-bell"></i> Payment Reminders</a>
+            <a th:classappend="${activePage == 'reports' ? ' active' : ''}" href="/finance/reports"><i class="fa-solid fa-chart-bar"></i> Reports</a>
+            <a th:classappend="${activePage == 'attendance' ? ' active' : ''}" href="/finance/attendance"><i class="fa-solid fa-clipboard-check"></i> Attendance</a>
+            <a th:classappend="${activePage == 'leave' ? ' active' : ''}" href="/finance/leave"><i class="fa-solid fa-calendar-times"></i> Leave</a>
+            <div class="muted">General</div>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </aside>
+</div>
+
+<!-- Client Sidebar Fragment -->
+<div th:fragment="clientSidebar(user, activePage)">
+    <aside class="sidebar">
+        <div class="brand"><span class="dot"></span> BuildSmart</div>
+        <div class="nav">
+            <a th:classappend="${activePage == 'dashboard' ? ' active' : ''}" href="/client/dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a th:classappend="${activePage == 'projects' ? ' active' : ''}" href="/client/projects"><i class="fa-solid fa-project-diagram"></i> My Projects</a>
+            <a th:classappend="${activePage == 'payments' ? ' active' : ''}" href="/client/payments"><i class="fa-solid fa-credit-card"></i> Payments</a>
+            <a th:classappend="${activePage == 'reminders' ? ' active' : ''}" href="/client/reminders"><i class="fa-solid fa-history"></i> Reminders</a>
+            <a th:classappend="${activePage == 'inquiries' ? ' active' : ''}" href="/client/inquiries"><i class="fa-solid fa-envelope"></i> Inquiries</a>
+            <div class="muted">General</div>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </aside>
+</div>
+
+<!-- Worker Sidebar Fragment -->
+<div th:fragment="workerSidebar(user, activePage)">
+    <aside class="sidebar">
+        <div class="brand"><span class="dot"></span> BuildSmart</div>
+        <div class="nav">
+            <a th:classappend="${activePage == 'dashboard' ? ' active' : ''}" href="/worker/dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a th:classappend="${activePage == 'tasks' ? ' active' : ''}" href="/worker/tasks"><i class="fa-solid fa-tasks"></i> My Tasks</a>
+            <a th:classappend="${activePage == 'attendance' ? ' active' : ''}" href="/worker/attendance"><i class="fa-solid fa-clock"></i> Attendance</a>
+            <a th:classappend="${activePage == 'leave' ? ' active' : ''}" href="/worker/leave"><i class="fa-solid fa-calendar-times"></i> Leave</a>
+            <div class="muted">General</div>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </aside>
+</div>
+
+<!-- HR Sidebar Fragment -->
+<div th:fragment="hrSidebar(user, activePage)">
+    <aside class="sidebar">
+        <div class="brand"><span class="dot"></span> BuildSmart</div>
+        <div class="nav">
+            <a th:classappend="${activePage == 'dashboard' ? ' active' : ''}" href="/hr/dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a th:classappend="${activePage == 'leave-requests' ? ' active' : ''}" href="/hr/leave-requests"><i class="fa-solid fa-calendar-check"></i> Leave Requests</a>
+            <a th:classappend="${activePage == 'attendance' ? ' active' : ''}" href="/hr/attendance"><i class="fa-solid fa-clock"></i> Attendance</a>
+            <a th:classappend="${activePage == 'employees' ? ' active' : ''}" href="/hr/employees"><i class="fa-solid fa-users"></i> Employees</a>
+            <div class="muted">General</div>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </aside>
 </div>

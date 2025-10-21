@@ -39,6 +39,7 @@
                                 <th>Project Name</th>
                                 <th>Location</th>
                                 <th>Status</th>
+                                <th>Active</th>
                                 <th>Progress</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
@@ -46,12 +47,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="project : ${projects}">
+                            <tr th:each="project : ${projects}" th:classappend="${!project.active ? 'table-secondary' : ''}">
                                 <td th:text="${project.name}">Project Name</td>
                                 <td th:text="${project.location}">Location</td>
                                 <td>
-                                    <span th:class="${project.status == 'IN_PROGRESS' ? 'badge success' : project.status == 'PLANNING' ? 'badge info' : project.status == 'COMPLETED' ? 'badge' : 'badge'}"
+                                    <span th:class="${project.status == 'IN_PROGRESS' ? 'badge info' : project.status == 'PLANNING' ? 'badge warning' : project.status == 'COMPLETED' ? 'badge success' : 'badge secondary'}"
                                           th:text="${project.status}">Status</span>
+                                </td>
+                                <td>
+                                    <span th:if="${project.active}" class="badge success">Active</span>
+                                    <span th:unless="${project.active}" class="badge danger">Inactive</span>
                                 </td>
                                 <td>
                                     <div class="progress" style="height:10px;">
@@ -63,15 +68,20 @@
                                 <td th:text="${#temporals.format(project.startDate, 'dd MMM yyyy')}">Start Date</td>
                                 <td th:text="${#temporals.format(project.endDate, 'dd MMM yyyy')}">End Date</td>
                                 <td>
-                                    <a th:href="@{/manager/projects/{id}(id=${project.id})}" class="btn btn-sm btn-outline-info">
+                                    <a th:href="@{/manager/projects/{id}(id=${project.id})}" class="btn btn-sm btn-outline-info" title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a th:href="@{/manager/projects/{id}/edit(id=${project.id})}" class="btn btn-sm btn-outline-warning">
+                                    <a th:if="${project.active}" th:href="@{/manager/projects/{id}/edit(id=${project.id})}" class="btn btn-sm btn-outline-warning" title="Edit Project">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form th:action="@{/manager/projects/{id}/delete(id=${project.id})}" method="post" style="display:inline" onsubmit="return confirm('Delete this project? This action cannot be undone.');">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
+                                    <form th:if="${project.active}" th:action="@{/manager/projects/{id}/delete(id=${project.id})}" method="post" style="display:inline" onsubmit="return confirm('Archive this project? It will be marked as inactive but can be restored later.');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Archive Project">
+                                            <i class="fas fa-archive"></i>
+                                        </button>
+                                    </form>
+                                    <form th:unless="${project.active}" th:action="@{/manager/projects/{id}/reactivate(id=${project.id})}" method="post" style="display:inline" onsubmit="return confirm('Reactivate this project? It will become active again.');">
+                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Reactivate Project">
+                                            <i class="fas fa-redo"></i>
                                         </button>
                                     </form>
                                 </td>

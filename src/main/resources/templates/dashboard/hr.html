@@ -5,232 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Executive Dashboard - BuildSmart CMS</title>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Manager Dashboard CSS -->
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-info">
-        <div class="container">
-            <a class="navbar-brand" href="/dashboard">
-                <i class="fas fa-hard-hat"></i> BuildSmart CMS
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/dashboard">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/hr/workers">
-                            <i class="fas fa-users"></i> Workers
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/hr/attendance">
-                            <i class="fas fa-clock"></i> Attendance
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/hr/leave">
-                            <i class="fas fa-calendar-alt"></i> Leave Requests
-                        </a>
-                    </li>
-                </ul>
+    <div class="app">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: hrSidebar(user=${user}, activePage='dashboard')}"></div>
+
+        <!-- Main Content -->
+        <main class="stack">
+            <!-- Hero Greeting -->
+            <section class="hero">
+                <h2>Good day, <span th:text="${user.name}">HR Executive</span> &#x1F44B;</h2>
+                <p>Manage your workforce efficiently and keep your team productive.</p>
+                <div class="cta">
+                    <a class="btn-primary" href="/hr/employees"><i class="fas fa-users me-1"></i> Manage Employees</a>
+                </div>
+            </section>
+
+            <!-- KPI Grid -->
+            <section class="grid">
+                <div class="card kpi">
+                    <div class="pill pill-blue"><i class="fas fa-users"></i></div>
+                    <div>
+                        <h3 th:text="${totalWorkers != null ? totalWorkers : '0'}">45</h3>
+                        <small class="text-muted">Total Workers</small>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="pill pill-green"><i class="fas fa-check-circle"></i></div>
+                    <div>
+                        <h3 th:text="${presentToday != null ? presentToday : '0'}">38</h3>
+                        <small class="text-muted">Present Today</small>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="pill pill-amber"><i class="fas fa-calendar-alt"></i></div>
+                    <div>
+                        <h3 th:text="${pendingLeaveRequests != null ? pendingLeaveRequests : '0'}">5</h3>
+                        <small class="text-muted">Leave Requests</small>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="pill pill-gray"><i class="fas fa-times-circle"></i></div>
+                    <div>
+                        <h3 th:text="${absentToday != null ? absentToday : '0'}">7</h3>
+                        <small class="text-muted">Absent Today</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Grid -->
+            <section class="content">
+                <div class="stack">
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-bolt me-1"></i> Quick Actions</h5>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <a href="/hr/workers/add" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-user-plus me-1"></i> Add Worker
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/hr/attendance/mark" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-clock me-1"></i> Mark Attendance
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/hr/leave/approve" class="btn btn-outline-warning w-100">
+                                    <i class="fas fa-calendar-check me-1"></i> Approve Leave
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/hr/reports" class="btn btn-outline-info w-100">
+                                    <i class="fas fa-chart-bar me-1"></i> Generate Reports
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-bell me-1"></i> Recent Notifications</h5>
+                            <span class="badge info">Live</span>
+                        </div>
+                        <div class="list">
+                            <div class="item">
+                                <div class="left">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div class="fw-semibold">New Leave Request</div>
+                                        <small class="text-muted">John Doe requested annual leave</small>
+                                    </div>
+                                </div>
+                                <span class="badge warning">2h ago</span>
+                            </div>
+                            <div class="item">
+                                <div class="left">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div class="fw-semibold">Worker Registration</div>
+                                        <small class="text-muted">New worker registered: Jane Smith</small>
+                                    </div>
+                                </div>
+                                <span class="badge success">4h ago</span>
+                            </div>
+                            <div class="item">
+                                <div class="left">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div class="fw-semibold">Attendance Alert</div>
+                                        <small class="text-muted">5 workers marked absent</small>
+                                    </div>
+                                </div>
+                                <span class="badge">6h ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> <span th:text="${user.name}">User</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/profile">
-                                <i class="fas fa-user-edit"></i> Profile
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+                <div class="stack">
 
-    <!-- Main Content -->
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="mb-4">
-                    <i class="fas fa-users"></i> HR Executive Dashboard
-                </h1>
-                <p class="text-muted">Welcome back, <span th:text="${user.name}">HR Executive</span>!</p>
-            </div>
-        </div>
-
-        <!-- Overview Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-info text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title">Total Workers</h5>
-                                <h2 class="mb-0">45</h2>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-users fa-2x"></i>
-                            </div>
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-clock me-1"></i> Today's Attendance</h5>
+                            <a class="badge" href="/hr/attendance">View All</a>
                         </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title">Present Today</h5>
-                                <h2 class="mb-0">38</h2>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-check-circle fa-2x"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title">Leave Requests</h5>
-                                <h2 class="mb-0">5</h2>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-calendar-alt fa-2x"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="card bg-danger text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title">Absent Today</h5>
-                                <h2 class="mb-0">7</h2>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-times-circle fa-2x"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-plus-circle"></i> Quick Actions
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <a href="/hr/workers/add" class="btn btn-info w-100">
-                                    <i class="fas fa-user-plus"></i> Add Worker
-                                </a>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <a href="/hr/attendance/mark" class="btn btn-success w-100">
-                                    <i class="fas fa-clock"></i> Mark Attendance
-                                </a>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <a href="/hr/leave/approve" class="btn btn-warning w-100">
-                                    <i class="fas fa-calendar-check"></i> Approve Leave
-                                </a>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <a href="/hr/reports" class="btn btn-primary w-100">
-                                    <i class="fas fa-chart-bar"></i> Generate Reports
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-bell"></i> Recent Notifications
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1">New Leave Request</h6>
-                                    <small class="text-muted">2 hours ago</small>
-                                </div>
-                                <p class="mb-1">John Doe requested annual leave for next week</p>
-                                <small class="text-muted">Action required</small>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1">Worker Registration</h6>
-                                    <small class="text-muted">4 hours ago</small>
-                                </div>
-                                <p class="mb-1">New worker registered: Jane Smith</p>
-                                <small class="text-muted">Completed</small>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1">Attendance Alert</h6>
-                                    <small class="text-muted">6 hours ago</small>
-                                </div>
-                                <p class="mb-1">5 workers marked absent today</p>
-                                <small class="text-muted">Under review</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Attendance Overview -->
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-clock"></i> Today's Attendance
-                        </h5>
-                    </div>
-                    <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover align-middle">
                                 <thead>
                                     <tr>
                                         <th>Worker Name</th>
@@ -242,78 +154,81 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>John Doe</td>
+                                        <td><strong>John Doe</strong></td>
                                         <td>08:00 AM</td>
                                         <td>05:00 PM</td>
-                                        <td>9 hours</td>
-                                        <td><span class="badge bg-success">Present</span></td>
+                                        <td>9 hrs</td>
+                                        <td><span class="badge success">Present</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Jane Smith</td>
+                                        <td><strong>Jane Smith</strong></td>
                                         <td>08:15 AM</td>
                                         <td>-</td>
                                         <td>-</td>
-                                        <td><span class="badge bg-warning">Late</span></td>
+                                        <td><span class="badge warning">Late</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Mike Johnson</td>
+                                        <td><strong>Mike Johnson</strong></td>
                                         <td>-</td>
                                         <td>-</td>
                                         <td>-</td>
-                                        <td><span class="badge bg-danger">Absent</span></td>
+                                        <td><span class="badge danger">Absent</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Sarah Wilson</td>
+                                        <td><strong>Sarah Wilson</strong></td>
                                         <td>08:00 AM</td>
                                         <td>02:00 PM</td>
-                                        <td>6 hours</td>
-                                        <td><span class="badge bg-info">Half Day</span></td>
+                                        <td>6 hrs</td>
+                                        <td><span class="badge info">Half Day</span></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-calendar-alt"></i> Pending Leave Requests
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">John Doe</h6>
-                                    <small class="text-muted">Annual Leave - 3 days</small>
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-calendar-alt me-1"></i> Pending Leave Requests</h5>
+                            <a class="badge" href="/hr/leave">View All</a>
+                        </div>
+                        <div class="list">
+                            <div class="item">
+                                <div class="left">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div class="fw-semibold">John Doe</div>
+                                        <small class="text-muted">Annual Leave - 3 days</small>
+                                    </div>
                                 </div>
-                                <span class="badge bg-warning">Pending</span>
+                                <span class="badge warning">Pending</span>
                             </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Jane Smith</h6>
-                                    <small class="text-muted">Sick Leave - 1 day</small>
+                            <div class="item">
+                                <div class="left">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div class="fw-semibold">Jane Smith</div>
+                                        <small class="text-muted">Sick Leave - 1 day</small>
+                                    </div>
                                 </div>
-                                <span class="badge bg-warning">Pending</span>
+                                <span class="badge warning">Pending</span>
                             </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">Mike Johnson</h6>
-                                    <small class="text-muted">Personal Leave - 2 days</small>
+                            <div class="item">
+                                <div class="left">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        <div class="fw-semibold">Mike Johnson</div>
+                                        <small class="text-muted">Personal - 2 days</small>
+                                    </div>
                                 </div>
-                                <span class="badge bg-warning">Pending</span>
+                                <span class="badge warning">Pending</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>

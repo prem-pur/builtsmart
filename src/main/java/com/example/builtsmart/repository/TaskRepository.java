@@ -38,4 +38,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     
     @Query("SELECT t FROM Task t WHERE t.deadline BETWEEN :startDate AND :endDate ORDER BY t.deadline")
     List<Task> findTasksByDeadlineBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
-} 
+    
+    List<Task> findByAssignedToOrderByDeadlineAsc(User assignedTo);
+    
+    @Query("SELECT t FROM Task t WHERE t.project = :project ORDER BY t.createdAt DESC")
+    List<Task> findByProjectOrderByCreatedAtDesc(@Param("project") com.example.builtsmart.entity.Project project);
+}

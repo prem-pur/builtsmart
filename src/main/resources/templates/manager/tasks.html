@@ -51,11 +51,11 @@
                                 <td th:text="${task.project?.name}">Project Name</td>
                                 <td th:text="${task.assignedTo?.name}">Assigned To</td>
                                 <td>
-                                    <span th:class="${task.status == 'COMPLETED' ? 'badge success' : task.status == 'IN_PROGRESS' ? 'badge info' : task.status == 'PENDING' ? 'badge warn' : 'badge'}"
+                                    <span th:class="${task.status == 'COMPLETED' ? 'badge success' : task.status == 'IN_PROGRESS' ? 'badge info' : task.status == 'PENDING' ? 'badge warning' : 'badge secondary'}"
                                           th:text="${task.status}">Status</span>
                                 </td>
                                 <td>
-                                    <span th:class="${task.priority == 'URGENT' ? 'badge warn' : task.priority == 'HIGH' ? 'badge info' : task.priority == 'MEDIUM' ? 'badge' : 'badge'}"
+                                    <span th:class="${task.priority == 'URGENT' ? 'badge danger' : task.priority == 'HIGH' ? 'badge warning' : task.priority == 'MEDIUM' ? 'badge info' : 'badge secondary'}"
                                           th:text="${task.priority}">Priority</span>
                                 </td>
                                 <td th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}">Deadline</td>
@@ -114,15 +114,15 @@
                                         <td th:text="${task.project?.name}">Project Name</td>
                                         <td th:text="${task.assignedTo?.name}">Assigned To</td>
                                         <td>
-                                            <span th:class="${task.status == 'COMPLETED' ? 'badge bg-success' : 
-                                                             task.status == 'IN_PROGRESS' ? 'badge bg-warning' : 
-                                                             task.status == 'PENDING' ? 'badge bg-info' : 'badge bg-secondary'}"
+                                            <span th:class="${task.status == 'COMPLETED' ? 'badge success' : 
+                                                             task.status == 'IN_PROGRESS' ? 'badge warning' : 
+                                                             task.status == 'PENDING' ? 'badge info' : 'badge secondary'}"
                                                   th:text="${task.status}">Status</span>
                                         </td>
                                         <td>
-                                            <span th:class="${task.priority == 'URGENT' ? 'badge bg-danger' : 
-                                                             task.priority == 'HIGH' ? 'badge bg-warning' : 
-                                                             task.priority == 'MEDIUM' ? 'badge bg-info' : 'badge bg-secondary'}"
+                                            <span th:class="${task.priority == 'URGENT' ? 'badge danger' : 
+                                                             task.priority == 'HIGH' ? 'badge warning' : 
+                                                             task.priority == 'MEDIUM' ? 'badge info' : 'badge secondary'}"
                                                   th:text="${task.priority}">Priority</span>
                                         </td>
                                         <td th:text="${#temporals.format(task.deadline, 'dd MMM yyyy')}">Deadline</td>

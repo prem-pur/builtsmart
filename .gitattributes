@@ -1,2 +1,19 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+# Force Java files to be detected as Java
+*.java linguist-detectable=true
+*.java linguist-language=Java
+
+# Mark other language files as documentation
+*.html linguist-documentation
+*.css linguist-documentation
+*.js linguist-documentation
+
+# Exclude build and dependency directories
+target/ linguist-vendored
+node_modules/ linguist-vendored
+*.min.js linguist-vendored
+*.min.css linguist-vendored
+
+# Mark resource files as data
+*.properties linguist-documentation

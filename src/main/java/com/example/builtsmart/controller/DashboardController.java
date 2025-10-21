@@ -17,7 +17,12 @@ public class DashboardController {
     
     @GetMapping("/")
     public String home() {
-        return "redirect:/dashboard";
+        return "landing";
+    }
+    
+    @GetMapping("/home")
+    public String landing() {
+        return "landing";
     }
     
     @GetMapping("/dashboard")
@@ -34,15 +39,15 @@ public class DashboardController {
             case PROJECT_MANAGER:
                 return "redirect:/manager/dashboard";
             case SITE_ENGINEER:
-                return "dashboard/engineer";
-            case HR_EXECUTIVE:
-                return "dashboard/hr";
+                return "redirect:/engineer/dashboard";
             case FINANCE_OFFICER:
-                return "dashboard/finance";
+                return "redirect:/finance/dashboard";
+            case HR_EXECUTIVE:
+                return "redirect:/hr/dashboard";
             case CLIENT_REPRESENTATIVE:
-                return "dashboard/client";
+                return "redirect:/client/dashboard";
             case WORKER:
-                return "dashboard/worker";
+                return "redirect:/worker/dashboard";
             default:
                 return "dashboard/default";
         }
@@ -51,10 +56,5 @@ public class DashboardController {
     @GetMapping("/login")
     public String login() {
         return "auth/login";
-    }
-    
-    @GetMapping("/register")
-    public String register() {
-        return "auth/register";
     }
 } 

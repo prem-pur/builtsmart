@@ -4,175 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${project.id == null ? 'New Project' : 'Edit Project'} + ' - BuildSmart CMS'">Project Form - BuildSmart CMS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap / Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Shared Manager Theme -->
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/dashboard">
-                <i class="fas fa-hard-hat"></i> BuildSmart CMS
-            </a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/manager/dashboard">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/manager/projects">
-                            <i class="fas fa-project-diagram"></i> Projects
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/manager/tasks">
-                            <i class="fas fa-tasks"></i> Tasks
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/manager/workers">
-                            <i class="fas fa-users"></i> Workers
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/manager/reports">
-                            <i class="fas fa-chart-bar"></i> Reports
-                        </a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> <span th:text="${user.name}">User</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/profile">
-                                <i class="fas fa-user-edit"></i> Profile
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>
-                        <i class="fas fa-project-diagram"></i> 
-                        <span th:text="${project.id == null ? 'Create New Project' : 'Edit Project'}">Project Form</span>
-                    </h1>
+    <div class="app">
+        <div th:replace="~{fragments/sidebar :: managerSidebar(user=${user}, activePage='projects')}"></div>
+        <main class="stack">
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1">
+                            <i class="fas fa-project-diagram me-2"></i>
+                            <span th:text="${project.id == null ? 'Create New Project' : 'Edit Project'}">Project Form</span>
+                        </h4>
+                        <p class="text-muted mb-0">Fill in the project details below</p>
+                    </div>
                     <a href="/manager/projects" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to Projects
+                        <i class="fas fa-arrow-left me-1"></i> Back
                     </a>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-edit"></i> 
-                            <span th:text="${project.id == null ? 'Project Details' : 'Update Project Details'}">Project Details</span>
-                        </h5>
+            <div class="card">
+                <!-- Error Alert -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span th:text="${error}">Error message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <form th:action="${project.id == null ? '/manager/projects' : '/manager/projects/' + project.id}" 
+                      th:object="${project}" method="post" id="projectForm">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-semibold">Project Name *</label>
+                                <input type="text" class="form-control" id="name" th:field="*{name}" 
+                                       placeholder="Enter project name" required>
+                                <div class="invalid-feedback">Please provide a project name.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="location" class="form-label fw-semibold">Location *</label>
+                                <input type="text" class="form-control" id="location" th:field="*{location}" 
+                                       placeholder="Enter project location" required>
+                                <div class="invalid-feedback">Please provide a location.</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form th:action="${project.id == null ? '/manager/projects' : '/manager/projects/' + project.id}" 
-                              th:object="${project}" method="post">
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label">Project Name *</label>
-                                        <input type="text" class="form-control" id="name" th:field="*{name}" 
-                                               placeholder="Enter project name" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="location" class="form-label">Location *</label>
-                                        <input type="text" class="form-control" id="location" th:field="*{location}" 
-                                               placeholder="Enter project location" required>
-                                    </div>
-                                </div>
-                            </div>
 
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-semibold">Description</label>
+                        <textarea class="form-control" id="description" th:field="*{description}" 
+                                  rows="3" placeholder="Enter project description"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" th:field="*{description}" 
-                                          rows="3" placeholder="Enter project description"></textarea>
+                                <label for="startDate" class="form-label fw-semibold">Start Date *</label>
+                                <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
+                                <div class="invalid-feedback">Please select a start date.</div>
                             </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="startDate" class="form-label">Start Date *</label>
-                                        <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="endDate" class="form-label">End Date</label>
-                                        <input type="date" class="form-control" id="endDate" th:field="*{endDate}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="status" class="form-label">Status</label>
-                                        <select class="form-select" id="status" th:field="*{status}">
-                                            <option th:each="status : ${projectStatuses}" 
-                                                    th:value="${status}" 
-                                                    th:text="${status}">Status</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="totalBudget" class="form-label">Total Budget (LKR)</label>
-                                        <input type="number" class="form-control" id="totalBudget" th:field="*{totalBudget}" 
-                                               step="0.01" placeholder="0.00">
-                                    </div>
-                                </div>
-                            </div>
-
+                        </div>
+                        <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="client" class="form-label">Client</label>
-                                <select class="form-select" id="client" th:field="*{client}">
-                                    <option value="">Select a client</option>
-                                    <option th:each="client : ${clients}" 
-                                            th:value="${client.id}" 
-                                            th:text="${client.name + ' (' + client.email + ')'}">Client</option>
+                                <label for="endDate" class="form-label fw-semibold">End Date</label>
+                                <input type="date" class="form-control" id="endDate" th:field="*{endDate}">
+                                <div class="invalid-feedback">End date must be after start date.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="status" class="form-label fw-semibold">Status</label>
+                                <select class="form-select" id="status" th:field="*{status}">
+                                    <option th:each="status : ${projectStatuses}" 
+                                            th:value="${status}" 
+                                            th:text="${status}">Status</option>
                                 </select>
                             </div>
-
-                            <div class="d-flex justify-content-between">
-                                <a href="/manager/projects" class="btn btn-secondary">
-                                    <i class="fas fa-times"></i> Cancel
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> 
-                                    <span th:text="${project.id == null ? 'Create Project' : 'Update Project'}">Save Project</span>
-                                </button>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="totalBudget" class="form-label fw-semibold">Total Budget (LKR)</label>
+                                <input type="number" class="form-control" id="totalBudget" th:field="*{totalBudget}" 
+                                       step="0.01" min="0" placeholder="0.00">
+                                <div class="invalid-feedback">Budget cannot be negative.</div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="mb-3">
+                        <label for="client" class="form-label fw-semibold">Client</label>
+                        <select class="form-select" id="client" th:field="*{client}">
+                            <option value="">Select a client</option>
+                            <option th:each="client : ${clients}" 
+                                    th:value="${client.id}" 
+                                    th:text="${client.name + ' (' + client.email + ')'}">Client</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="/manager/projects" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> 
+                            <span th:text="${project.id == null ? 'Create Project' : 'Update Project'}">Save Project</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-        </div>
+        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Client-side validation
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const budget = document.getElementById('totalBudget').value;
+            
+            let isValid = true;
+            
+            // Validate end date is after start date
+            if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+                e.preventDefault();
+                document.getElementById('endDate').classList.add('is-invalid');
+                isValid = false;
+            } else {
+                document.getElementById('endDate').classList.remove('is-invalid');
+            }
+            
+            // Validate budget is not negative
+            if (budget && parseFloat(budget) < 0) {
+                e.preventDefault();
+                document.getElementById('totalBudget').classList.add('is-invalid');
+                isValid = false;
+            } else {
+                document.getElementById('totalBudget').classList.remove('is-invalid');
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+        
+        // Clear validation on input
+        document.getElementById('endDate').addEventListener('change', function() {
+            this.classList.remove('is-invalid');
+        });
+        document.getElementById('totalBudget').addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+        });
+    </script>
 </body>
-</html> 
+</html>

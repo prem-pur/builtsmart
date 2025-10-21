@@ -48,7 +48,7 @@
                                 <td th:text="${worker.phone}">Phone</td>
                                 <td th:text="${worker.department}">Department</td>
                                 <td>
-                                    <span th:class="${worker.active} ? 'badge success' : 'badge warn'"
+                                    <span th:class="${worker.active} ? 'badge success' : 'badge danger'"
                                           th:text="${worker.active} ? 'Active' : 'Inactive'">Status</span>
                                 </td>
                                 <td>

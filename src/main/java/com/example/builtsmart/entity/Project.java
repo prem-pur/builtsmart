@@ -65,11 +65,21 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Expense> expenses;
     
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PaymentReminder> paymentReminders;
+    
     @Column(name = "created_at")
     private LocalDate createdAt = LocalDate.now();
     
     @Column(nullable = false)
     private Boolean active = true;
+    
+    // Transient fields for UI display
+    @Transient
+    private Integer completionPercentage;
+    
+    @Transient
+    private Integer taskCount;
     
     public enum ProjectStatus {
         PLANNING,

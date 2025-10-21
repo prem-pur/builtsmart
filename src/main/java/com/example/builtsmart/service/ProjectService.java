@@ -43,7 +43,11 @@ public class ProjectService {
     }
     
     public void deleteProject(Long id) {
-        projectRepository.deleteById(id);
+        // Soft delete - set active to false instead of deleting
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        project.setActive(false);
+        projectRepository.save(project);
     }
     
     public List<Project> getActiveProjects() {

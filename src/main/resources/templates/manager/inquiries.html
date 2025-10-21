@@ -43,7 +43,7 @@
                 </td>
                 <td th:text="${inq.subject != null ? inq.subject : '-'}">Subject</td>
                 <td>
-                  <span class="badge" th:classappend="${inq.status != null and inq.status.name() == 'OPEN' ? ' warn' : ' success'}" th:text="${inq.status != null ? inq.status : 'OPEN'}">OPEN</span>
+                  <span class="badge" th:classappend="${inq.status != null and inq.status.toString() == 'OPEN' ? ' warning' : ' success'}" th:text="${inq.status != null ? inq.status : 'OPEN'}">OPEN</span>
                 </td>
                 <td>
                   <a th:href="@{/manager/inquiries/{id}(id=${inq.id})}" class="btn btn-sm btn-outline-info">View</a>

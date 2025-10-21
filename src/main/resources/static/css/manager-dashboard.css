@@ -111,11 +111,157 @@ body{background:var(--bg); color:var(--text); font-family:"Inter", system-ui, -a
 .timebox{display:grid; place-items:center; background:linear-gradient(145deg,#0ea5e9,#22d3ee); color:#fff; border-radius:16px; padding:16px; box-shadow:var(--shadow-md)}
 .timebox h3{margin:0; font-size:28px}
 
+/* Additional badge styles */
+.badge.danger{background:#fee2e2; color:#991b1b}
+.badge.warning{background:#fff7ed; color:#b45309}
+.badge.secondary{background:#f3f4f6; color:#4b5563}
+.badge.primary{background:#e0e7ff; color:#4338ca}
+
+/* Table improvements */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table thead th {
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    padding: 12px;
+}
+
+/* Mobile Navigation */
+.mobile-nav-toggle {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 8px 24px rgba(197, 33, 28, 0.35);
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.2s;
+}
+
+.mobile-nav-toggle:active {
+    transform: scale(0.95);
+}
+
+.mobile-nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(4px);
+}
+
+.mobile-nav-overlay.active {
+    display: block;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 /* Responsive */
 @media (max-width:1200px){
   .content{grid-template-columns:1fr}
+  .grid{grid-template-columns: repeat(2, 1fr)}
 }
+
 @media (max-width:992px){
-  .app{grid-template-columns: 1fr;}
-  .sidebar{position:relative; height:auto}
+  .app{grid-template-columns: 1fr; padding: 16px;}
+  .sidebar{
+    position: fixed;
+    left: -300px;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sidebar.mobile-open {
+    left: 0;
+  }
+  .mobile-nav-toggle {
+    display: grid;
+    place-items: center;
+  }
+  
+  /* Make cards stack */
+  .content {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Adjust search */
+  .header {
+    flex-wrap: wrap;
+  }
+  .search {
+    order: 2;
+    width: 100%;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width:768px){
+  .grid{grid-template-columns: 1fr}
+  .hero h2{font-size: 20px}
+  .hero p{font-size: 14px}
+  .kpi h3{font-size: 22px}
+  
+  /* Stack action buttons */
+  .row.g-3 {
+    flex-direction: column;
+  }
+  
+  /* Better table on mobile */
+  .table thead {
+    display: none;
+  }
+  
+  .table tbody tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+  }
+  
+  .table tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border: none;
+  }
+  
+  .table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+}
+
+@media (max-width:480px){
+  .app{padding: 12px}
+  .card{padding: 14px}
+  .section-title h5{font-size: 14px}
 }

@@ -57,7 +57,8 @@ public class Attendance {
         ABSENT,
         LATE,
         HALF_DAY,
-        ON_LEAVE
+        ON_LEAVE,
+        DEPARTED
     }
     
     public Double calculateHoursWorked() {

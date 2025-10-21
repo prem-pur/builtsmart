@@ -47,7 +47,7 @@
                                 <p class="mb-2"><strong>Department:</strong> <span th:text="${worker.department}">department</span></p>
                                 <p class="mb-2"><strong>Role:</strong> <span th:text="${worker.role}">role</span></p>
                                 <p class="mb-2"><strong>Status:</strong>
-                                    <span th:class="${worker.active} ? 'badge bg-success' : 'badge bg-danger'"
+                                    <span th:class="${worker.active} ? 'badge success' : 'badge danger'"
                                           th:text="${worker.active} ? 'Active' : 'Inactive'">Active</span>
                                 </p>
                                 <p class="mb-0" th:if="${worker.address}"><strong>Address:</strong> <span th:text="${worker.address}">address</span></p>
@@ -84,11 +84,11 @@
                                                 <td th:text="${t.description}">Task description</td>
                                                 <td th:text="${t.project != null ? t.project.name : '—'}">Project</td>
                                                 <td>
-                                                    <span class="badge" th:classappend="${t.status.name() == 'COMPLETED'} ? ' bg-success' : (${t.status.name() == 'IN_PROGRESS'} ? ' bg-warning' : ' bg-secondary')"
+                                                    <span class="badge" th:classappend="${t.status.toString() == 'COMPLETED'} ? ' success' : (${t.status.toString() == 'IN_PROGRESS'} ? ' warning' : ' secondary')"
                                                           th:text="${t.status}">Status</span>
                                                 </td>
                                                 <td>
-                                                    <span class="badge" th:classappend="${t.priority.name() == 'URGENT'} ? ' bg-danger' : (${t.priority.name() == 'HIGH'} ? ' bg-warning' : ' bg-info')"
+                                                    <span class="badge" th:classappend="${t.priority.toString() == 'URGENT'} ? ' danger' : (${t.priority.toString() == 'HIGH'} ? ' warning' : ' info')"
                                                           th:text="${t.priority}">Priority</span>
                                                 </td>
                                                 <td th:text="${t.deadline != null ? #temporals.format(t.deadline, 'dd MMM yyyy') : '—'}">Deadline</td>

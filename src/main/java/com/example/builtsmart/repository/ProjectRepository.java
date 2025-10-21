@@ -17,6 +17,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     
     List<Project> findByProjectManager(User projectManager);
     
+    @Query("SELECT p FROM Project p WHERE p.client.email = :clientEmail ORDER BY p.createdAt DESC")
+    List<Project> findByClientEmail(@Param("clientEmail") String clientEmail);
+    
     List<Project> findByClient(User client);
     
     @Query("SELECT p FROM Project p WHERE p.status = :status AND p.active = true")
@@ -36,4 +39,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     
     @Query("SELECT p FROM Project p WHERE p.client.id = :clientId")
     List<Project> findProjectsByClientId(@Param("clientId") Long clientId);
+    
+    List<Project> findByActive(Boolean active);
 } 

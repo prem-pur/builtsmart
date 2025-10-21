@@ -125,6 +125,28 @@ public class InquiryController {
         inquiry.setStatus(Inquiry.Status.OPEN);
         inquiry.setCreatedAt(LocalDateTime.now());
         inquiryRepository.save(inquiry);
+        return "redirect:/client/inquiries?success=true";
+    }
+
+    // CLIENT: Delete inquiry
+    @PostMapping("/client/inquiries/{id}/delete")
+    public String clientDeleteInquiry(@PathVariable Long id,
+                                      @SessionAttribute(name = "user", required = false) Object user) {
+        String email = null;
+        if (user != null) {
+            try {
+                var clazz = user.getClass();
+                var getEmail = clazz.getMethod("getEmail");
+                email = (String) getEmail.invoke(user);
+            } catch (Exception ignored) {}
+        }
+        
+        // Verify the inquiry belongs to the client before deleting
+        Optional<Inquiry> inquiry = inquiryRepository.findById(id);
+        if (inquiry.isPresent() && email != null && email.equals(inquiry.get().getClientEmail())) {
+            inquiryRepository.deleteById(id);
+        }
+        
         return "redirect:/client/inquiries";
     }
 }

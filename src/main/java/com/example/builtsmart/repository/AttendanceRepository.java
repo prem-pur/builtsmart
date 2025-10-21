@@ -16,6 +16,10 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     
     List<Attendance> findByUser(User user);
     
+    List<Attendance> findByUserOrderByDateDesc(User user);
+    
+    boolean existsByUserAndDate(User user, LocalDate date);
+    
     List<Attendance> findByDate(LocalDate date);
     
     List<Attendance> findByUserAndDateBetween(User user, LocalDate startDate, LocalDate endDate);

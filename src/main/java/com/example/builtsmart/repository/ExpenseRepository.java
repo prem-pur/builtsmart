@@ -34,4 +34,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     
     @Query("SELECT e FROM Expense e WHERE e.project.id = :projectId ORDER BY e.createdAt DESC")
     List<Expense> findByProjectOrderByCreatedAtDesc(@Param("projectId") Long projectId);
+    
+    @Query("SELECT e FROM Expense e ORDER BY e.createdAt DESC")
+    List<Expense> findAllOrderByCreatedAtDesc();
 }

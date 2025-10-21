@@ -27,4 +27,6 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
     
     @Query("SELECT lr FROM LeaveRequest lr WHERE lr.status = 'PENDING' ORDER BY lr.requestDate ASC")
     List<LeaveRequest> findPendingLeaveRequests();
+    
+    List<LeaveRequest> findByEmployeeOrderByCreatedAtDesc(User employee);
 }

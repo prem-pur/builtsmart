@@ -32,6 +32,7 @@ public class ProjectManagerController {
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
     private final AttendanceRepository attendanceRepository;
+    private final LeaveRequestRepository leaveRequestRepository;
     
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
@@ -151,6 +152,28 @@ public class ProjectManagerController {
         User currentUser = userService.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
+        // Validate end date is after start date
+        if (project.getEndDate() != null && project.getStartDate() != null) {
+            if (project.getEndDate().isBefore(project.getStartDate())) {
+                model.addAttribute("error", "End date must be after start date");
+                model.addAttribute("user", currentUser);
+                model.addAttribute("project", project);
+                model.addAttribute("clients", userRepository.findByRole(User.UserRole.CLIENT_REPRESENTATIVE));
+                model.addAttribute("projectStatuses", Project.ProjectStatus.values());
+                return "manager/project-form";
+            }
+        }
+        
+        // Validate budget is not negative
+        if (project.getTotalBudget() != null && project.getTotalBudget().compareTo(BigDecimal.ZERO) < 0) {
+            model.addAttribute("error", "Budget cannot be negative");
+            model.addAttribute("user", currentUser);
+            model.addAttribute("project", project);
+            model.addAttribute("clients", userRepository.findByRole(User.UserRole.CLIENT_REPRESENTATIVE));
+            model.addAttribute("projectStatuses", Project.ProjectStatus.values());
+            return "manager/project-form";
+        }
+        
         project.setProjectManager(currentUser);
         project.setActive(true);
         
@@ -164,6 +187,18 @@ public class ProjectManagerController {
         // Optional: add ownership/role checks here if needed
         projectService.deleteProject(id);
         return "redirect:/manager/projects";
+    }
+    
+    @PostMapping("/projects/{id}/reactivate")
+    public String reactivateProject(@PathVariable Long id, Authentication authentication) {
+        Project project = projectService.getProjectById(id)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        
+        // Reactivate the project
+        project.setActive(true);
+        projectService.saveProject(project);
+        
+        return "redirect:/manager/projects?reactivated=true";
     }
     
     @GetMapping("/projects/{id}")
@@ -209,8 +244,33 @@ public class ProjectManagerController {
     @PostMapping("/projects/{id}")
     public String updateProject(@PathVariable Long id, @ModelAttribute Project project, 
                               Authentication authentication, Model model) {
+        User currentUser = userService.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
         Project existingProject = projectService.getProjectById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
+        
+        // Validate end date is after start date
+        if (project.getEndDate() != null && project.getStartDate() != null) {
+            if (project.getEndDate().isBefore(project.getStartDate())) {
+                model.addAttribute("error", "End date must be after start date");
+                model.addAttribute("user", currentUser);
+                model.addAttribute("project", existingProject);
+                model.addAttribute("clients", userRepository.findByRole(User.UserRole.CLIENT_REPRESENTATIVE));
+                model.addAttribute("projectStatuses", Project.ProjectStatus.values());
+                return "manager/project-form";
+            }
+        }
+        
+        // Validate budget is not negative
+        if (project.getTotalBudget() != null && project.getTotalBudget().compareTo(BigDecimal.ZERO) < 0) {
+            model.addAttribute("error", "Budget cannot be negative");
+            model.addAttribute("user", currentUser);
+            model.addAttribute("project", existingProject);
+            model.addAttribute("clients", userRepository.findByRole(User.UserRole.CLIENT_REPRESENTATIVE));
+            model.addAttribute("projectStatuses", Project.ProjectStatus.values());
+            return "manager/project-form";
+        }
         
         // Update fields
         existingProject.setName(project.getName());
@@ -365,9 +425,22 @@ public class ProjectManagerController {
     }
     
     @PostMapping("/tasks")
-    public String createTask(@ModelAttribute Task task, Authentication authentication) {
+    public String createTask(@ModelAttribute Task task, Authentication authentication, Model model) {
         User currentUser = userService.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Validate deadline is not in the past
+        if (task.getDeadline() != null && task.getDeadline().isBefore(LocalDate.now())) {
+            model.addAttribute("error", "Deadline cannot be in the past");
+            model.addAttribute("user", currentUser);
+            model.addAttribute("task", task);
+            model.addAttribute("projects", projectService.getProjectsByManager(currentUser));
+            model.addAttribute("workers", userRepository.findByRole(User.UserRole.WORKER));
+            model.addAttribute("engineers", userRepository.findByRole(User.UserRole.SITE_ENGINEER));
+            model.addAttribute("taskStatuses", Task.TaskStatus.values());
+            model.addAttribute("taskPriorities", Task.TaskPriority.values());
+            return "manager/task-form";
+        }
         
         task.setAssignedBy(currentUser);
         taskService.saveTask(task);
@@ -513,9 +586,19 @@ public class ProjectManagerController {
     }
     
     @PostMapping("/projects/expenses")
-    public String createProjectExpense(@ModelAttribute Expense expense, Authentication authentication) {
+    public String createProjectExpense(@ModelAttribute Expense expense, Authentication authentication, Model model) {
         User currentUser = userService.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Validate amount is not negative
+        if (expense.getAmount() != null && expense.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+            model.addAttribute("error", "Expense amount cannot be negative");
+            model.addAttribute("user", currentUser);
+            model.addAttribute("expense", expense);
+            model.addAttribute("projects", projectRepository.findAll());
+            model.addAttribute("expenseCategories", Expense.ExpenseCategory.values());
+            return "manager/expense-form";
+        }
         
         expense.setSubmittedBy(currentUser);
         expense.setCreatedAt(LocalDateTime.now());
@@ -567,5 +650,135 @@ public class ProjectManagerController {
         model.addAttribute("task", task);
         
         return "manager/task-detail";
+    }
+    
+    // ==================== LEAVE REQUESTS ====================
+    
+    @GetMapping("/leave")
+    public String leave(Authentication authentication, Model model) {
+        User currentUser = userService.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        List<LeaveRequest> myLeaveRequests = leaveRequestRepository.findByEmployeeOrderByCreatedAtDesc(currentUser);
+        
+        model.addAttribute("user", currentUser);
+        model.addAttribute("leaveRequests", myLeaveRequests);
+        model.addAttribute("leaveTypes", LeaveRequest.LeaveType.values());
+        
+        return "manager/leave";
+    }
+    
+    @PostMapping("/leave/request")
+    public String submitLeaveRequest(@RequestParam LocalDate startDate,
+                                    @RequestParam LocalDate endDate,
+                                    @RequestParam LeaveRequest.LeaveType type,
+                                    @RequestParam String reason,
+                                    Authentication authentication) {
+        User currentUser = userService.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        LeaveRequest leaveRequest = new LeaveRequest();
+        leaveRequest.setEmployee(currentUser);
+        leaveRequest.setStartDate(startDate);
+        leaveRequest.setEndDate(endDate);
+        leaveRequest.setType(type);
+        leaveRequest.setReason(reason);
+        leaveRequest.setStatus(LeaveRequest.LeaveStatus.PENDING);
+        leaveRequest.setCreatedAt(LocalDateTime.now());
+        leaveRequest.setRequestDate(LocalDate.now());
+        
+        leaveRequestRepository.save(leaveRequest);
+        
+        return "redirect:/manager/leave?success=true";
+    }
+    
+    @PostMapping("/leave/{id}/delete")
+    public String deleteLeaveRequest(@PathVariable Long id, Authentication authentication) {
+        User currentUser = userService.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        LeaveRequest leaveRequest = leaveRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Leave request not found"));
+        
+        // Only allow deletion if the request belongs to the current user and is still PENDING
+        if (leaveRequest.getEmployee().getId().equals(currentUser.getId()) && 
+            leaveRequest.getStatus() == LeaveRequest.LeaveStatus.PENDING) {
+            leaveRequestRepository.deleteById(id);
+        }
+        
+        return "redirect:/manager/leave";
+    }
+    
+    @GetMapping("/attendance")
+    public String attendance(Authentication authentication, Model model) {
+        User currentUser = userService.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Get today's attendance
+        LocalDate today = LocalDate.now();
+        Attendance todayAttendance = attendanceRepository.findByUserAndDate(currentUser, today).orElse(null);
+        
+        // Get recent attendance records
+        List<Attendance> recentAttendance = attendanceRepository.findByUserOrderByDateDesc(currentUser)
+                .stream().limit(10).toList();
+        
+        model.addAttribute("user", currentUser);
+        model.addAttribute("todayAttendance", todayAttendance);
+        model.addAttribute("recentAttendance", recentAttendance);
+        model.addAttribute("currentTime", java.time.LocalTime.now());
+        
+        return "manager/attendance";
+    }
+    
+    @PostMapping("/attendance/mark")
+    public String markAttendance(Authentication authentication) {
+        User currentUser = userService.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        LocalDate today = LocalDate.now();
+        java.time.LocalTime now = java.time.LocalTime.now();
+        
+        // Check if already marked
+        if (!attendanceRepository.existsByUserAndDate(currentUser, today)) {
+            Attendance attendance = new Attendance();
+            attendance.setUser(currentUser);
+            attendance.setDate(today);
+            attendance.setCheckIn(now);
+            
+            // Set status: LATE if after 9:30 AM, otherwise PRESENT
+            java.time.LocalTime cutoffTime = java.time.LocalTime.of(9, 30);
+            if (now.isAfter(cutoffTime)) {
+                attendance.setStatus(Attendance.AttendanceStatus.LATE);
+            } else {
+                attendance.setStatus(Attendance.AttendanceStatus.PRESENT);
+            }
+            
+            attendance.setCreatedAt(LocalDateTime.now());
+            attendanceRepository.save(attendance);
+        }
+        
+        return "redirect:/manager/attendance";
+    }
+    
+    @PostMapping("/attendance/checkout")
+    public String checkoutAttendance(Authentication authentication) {
+        User currentUser = userService.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        LocalDate today = LocalDate.now();
+        java.time.LocalTime now = java.time.LocalTime.now();
+        
+        // Find today's attendance
+        Attendance attendance = attendanceRepository.findByUserAndDate(currentUser, today)
+                .orElseThrow(() -> new RuntimeException("No check-in record found for today"));
+        
+        // Mark checkout
+        attendance.setCheckOut(now);
+        attendance.setHoursWorked(attendance.calculateHoursWorked());
+        attendance.setStatus(Attendance.AttendanceStatus.DEPARTED);
+        attendance.setUpdatedAt(LocalDateTime.now());
+        attendanceRepository.save(attendance);
+        
+        return "redirect:/manager/attendance?checkout=true";
     }
 }

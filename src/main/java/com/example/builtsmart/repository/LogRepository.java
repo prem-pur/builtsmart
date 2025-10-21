@@ -34,4 +34,11 @@ public interface LogRepository extends JpaRepository<Log, Long> {
     List<Log> findByTypeOrderByCreatedAtDesc(@Param("type") Log.LogType type);
     
     List<Log> findTop5ByOrderByCreatedAtDesc();
-} 
+    
+    List<Log> findBySubmittedByOrderByCreatedAtDesc(User submittedBy);
+    
+    List<Log> findBySubmittedByAndTypeOrderByCreatedAtDesc(User submittedBy, Log.LogType type);
+    
+    @Query("SELECT l FROM Log l WHERE l.project = :project ORDER BY l.createdAt DESC")
+    List<Log> findByProjectOrderByCreatedAtDesc(@Param("project") Project project);
+}
