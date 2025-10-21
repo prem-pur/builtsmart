@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management - BuildSmart CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <div th:replace="~{fragments/sidebar :: hrSidebar(user=${user}, activePage='attendance')}"></div>
+        <main class="stack">
+            <!-- Header -->
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1"><i class="fas fa-clock me-2"></i>Attendance Management</h4>
+                        <p class="text-muted mb-0">View and manage employee attendance records</p>
+                    </div>
+                    <div>
+                        <form action="/hr/attendance" method="get" class="d-flex gap-2">
+                            <input type="date" name="date" class="form-control" th:value="${selectedDate}">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stat-label">Present</div>
+                                <div class="stat-value" th:text="${presentCount}">0</div>
+                            </div>
+                            <div class="stat-icon success">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stat-label">Late</div>
+                                <div class="stat-value" th:text="${lateCount}">0</div>
+                            </div>
+                            <div class="stat-icon warning">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stat-label">Absent</div>
+                                <div class="stat-value" th:text="${absentCount}">0</div>
+                            </div>
+                            <div class="stat-icon danger">
+                                <i class="fas fa-user-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Records -->
+            <div class="card">
+                <div class="section-title">
+                    <h5><i class="fas fa-calendar-day me-1"></i> Attendance for <span th:text="${#temporals.format(selectedDate, 'dd MMMM yyyy')}">Date</span></h5>
+                </div>
+
+                <div th:if="${#lists.isEmpty(attendanceRecords)}" class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                    <h5>No Attendance Records</h5>
+                    <p class="text-muted">No employees have marked attendance for this date.</p>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(attendanceRecords)}" class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Role</th>
+                                <th>Check-in Time</th>
+                                <th>Check-out Time</th>
+                                <th>Hours Worked</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="record : ${attendanceRecords}">
+                                <td>
+                                    <strong th:text="${record.user.name}">Employee</strong>
+                                    <div class="small text-muted" th:text="${record.user.email}">Email</div>
+                                </td>
+                                <td><span class="badge bg-secondary" th:text="${record.user.role}">Role</span></td>
+                                <td>
+                                    <span th:if="${record.checkIn != null}" th:text="${#temporals.format(record.checkIn, 'HH:mm:ss')}">Time</span>
+                                    <span th:if="${record.checkIn == null}">-</span>
+                                </td>
+                                <td>
+                                    <span th:if="${record.checkOut != null}" th:text="${#temporals.format(record.checkOut, 'HH:mm:ss')}">Time</span>
+                                    <span th:if="${record.checkOut == null}">-</span>
+                                </td>
+                                <td>
+                                    <span th:if="${record.hoursWorked != null}" th:text="${#numbers.formatDecimal(record.hoursWorked, 1, 2)} + ' hrs'">0 hrs</span>
+                                    <span th:if="${record.hoursWorked == null}">-</span>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${record.status.toString() == 'PRESENT' ? ' success' : 
+                                                          record.status.toString() == 'LATE' ? ' warning' : 
+                                                          record.status.toString() == 'ABSENT' ? ' danger' : 
+                                                          record.status.toString() == 'ON_LEAVE' ? ' info' : ' secondary'}"
+                                          th:text="${record.status}">Status</span>
+                                </td>
+                                <td>
+                                    <span th:if="${record.notes != null}" th:text="${record.notes}">Notes</span>
+                                    <span th:if="${record.notes == null}">-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- All Employees List -->
+            <div class="card">
+                <div class="section-title">
+                    <h5><i class="fas fa-users me-1"></i> All Employees</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status Today</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="employee : ${allEmployees}">
+                                <td th:text="${employee.name}">Name</td>
+                                <td th:text="${employee.email}">Email</td>
+                                <td><span class="badge secondary" th:text="${employee.role}">Role</span></td>
+                                <td>
+                                    <span th:if="${attendanceRecords.?[user.id == __${employee.id}__].size() > 0}" class="badge success">
+                                        <i class="fas fa-check-circle"></i> Present
+                                    </span>
+                                    <span th:if="${attendanceRecords.?[user.id == __${employee.id}__].size() == 0}" class="badge danger">
+                                        <i class="fas fa-times-circle"></i> Absent
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

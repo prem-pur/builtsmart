@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment Portal - BuildSmart CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .payment-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .payment-header {
+            background: #fff;
+            border-radius: 10px 10px 0 0;
+            padding: 20px 30px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+        .payment-body {
+            background: #fff;
+            border-radius: 0 0 10px 10px;
+            padding: 30px;
+        }
+        .secure-badge {
+            background: #198754;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .payment-method-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        .payment-method-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        .payment-method-card.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        .payment-method-card input[type="radio"] {
+            width: 20px;
+            height: 20px;
+        }
+        .card-input {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .card-input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .payment-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+        }
+        .btn-pay {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        .security-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            opacity: 0.6;
+        }
+        .card-logos {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .card-logo {
+            width: 50px;
+            height: 32px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <!-- Header -->
+        <div class="payment-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1"><i class="fas fa-building me-2"></i>BuildSmart CMS</h4>
+                    <small class="text-muted">Secure Payment Gateway</small>
+                </div>
+                <div>
+                    <span class="secure-badge">
+                        <i class="fas fa-lock me-1"></i>Secure
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Body -->
+        <div class="payment-body">
+            <div class="row">
+                <!-- Payment Form -->
+                <div class="col-lg-7">
+                    <h5 class="mb-4">Select Payment Method</h5>
+                    
+                    <form th:action="@{/client/payment-portal/{id}/submit(id=${reminder.id})}" method="post" id="paymentForm">
+                        <!-- Payment Methods -->
+                        <div class="payment-methods mb-4">
+                            <!-- Credit/Debit Card -->
+                            <div class="payment-method-card" onclick="selectPaymentMethod('card')">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" name="paymentMethod" value="Credit/Debit Card" id="card" required>
+                                    <label for="card" class="ms-3 mb-0 flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Credit / Debit Card</strong>
+                                                <div class="card-logos">
+                                                    <div class="card-logo">VISA</div>
+                                                    <div class="card-logo">MC</div>
+                                                    <div class="card-logo">AMEX</div>
+                                                </div>
+                                            </div>
+                                            <i class="fas fa-credit-card fa-2x text-primary"></i>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Net Banking -->
+                            <div class="payment-method-card" onclick="selectPaymentMethod('netbanking')">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" name="paymentMethod" value="Net Banking" id="netbanking" required>
+                                    <label for="netbanking" class="ms-3 mb-0 flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Net Banking</strong>
+                                                <div><small class="text-muted">All major banks supported</small></div>
+                                            </div>
+                                            <i class="fas fa-university fa-2x text-success"></i>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- UPI -->
+                            <div class="payment-method-card" onclick="selectPaymentMethod('upi')">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" name="paymentMethod" value="UPI" id="upi" required>
+                                    <label for="upi" class="ms-3 mb-0 flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>UPI Payment</strong>
+                                                <div><small class="text-muted">Google Pay, PhonePe, Paytm</small></div>
+                                            </div>
+                                            <i class="fas fa-mobile-alt fa-2x text-info"></i>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Bank Transfer -->
+                            <div class="payment-method-card" onclick="selectPaymentMethod('transfer')">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" name="paymentMethod" value="Bank Transfer" id="transfer" required>
+                                    <label for="transfer" class="ms-3 mb-0 flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Direct Bank Transfer</strong>
+                                                <div><small class="text-muted">NEFT / RTGS / IMPS</small></div>
+                                            </div>
+                                            <i class="fas fa-exchange-alt fa-2x text-warning"></i>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transaction Details -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Transaction Details</h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Transaction ID / Reference Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control card-input" name="transactionId" 
+                                       placeholder="Enter transaction ID or reference number" required>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Enter the transaction ID from your payment confirmation
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Additional Notes (Optional)</label>
+                                <textarea class="form-control card-input" name="paymentNotes" rows="3" 
+                                          placeholder="Any additional information about this payment..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-pay">
+                                <i class="fas fa-lock me-2"></i>
+                                Complete Payment of LKR <span th:text="${#numbers.formatDecimal(reminder.amount, 0, 'COMMA', 2, 'POINT')}">0</span>
+                            </button>
+                            <a th:href="@{/client/payments}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Cancel
+                            </a>
+                        </div>
+
+                        <!-- Security Info -->
+                        <div class="security-icons">
+                            <i class="fas fa-shield-alt fa-2x"></i>
+                            <i class="fas fa-lock fa-2x"></i>
+                            <i class="fas fa-check-circle fa-2x"></i>
+                            <small class="text-muted">256-bit SSL Encrypted</small>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="col-lg-5">
+                    <div class="payment-summary">
+                        <h5 class="mb-3">Payment Summary</h5>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted">Project</small>
+                            <div class="fw-semibold" th:text="${reminder.project.name}">Project Name</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted">Description</small>
+                            <div th:text="${reminder.description}">Payment Description</div>
+                        </div>
+
+                        <div class="mb-3" th:if="${reminder.recipient}">
+                            <small class="text-muted">Recipient</small>
+                            <div th:text="${reminder.recipient}">Recipient</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted">Due Date</small>
+                            <div th:text="${#temporals.format(reminder.dueDate, 'dd MMMM yyyy')}">Date</div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Amount</span>
+                            <strong>LKR <span th:text="${#numbers.formatDecimal(reminder.amount, 0, 'COMMA', 2, 'POINT')}">0</span></strong>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Processing Fee</span>
+                            <strong>LKR 0.00</strong>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Total Amount</h5>
+                            <h4 class="mb-0 text-primary">LKR <span th:text="${#numbers.formatDecimal(reminder.amount, 0, 'COMMA', 2, 'POINT')}">0</span></h4>
+                        </div>
+
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <small>Your payment will be verified by our finance team within 24 hours.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function selectPaymentMethod(method) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.payment-method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            event.currentTarget.classList.add('selected');
+            
+            // Check the radio button
+            document.getElementById(method).checked = true;
+        }
+
+        // Form validation
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            const transactionId = document.querySelector('input[name="transactionId"]').value;
+            
+            if (!paymentMethod) {
+                e.preventDefault();
+                alert('Please select a payment method');
+                return false;
+            }
+            
+            if (!transactionId.trim()) {
+                e.preventDefault();
+                alert('Please enter a transaction ID');
+                return false;
+            }
+            
+            return confirm('Are you sure you want to submit this payment? Please verify all details are correct.');
+        });
+    </script>
+</body>
+</html>

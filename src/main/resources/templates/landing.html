@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuiltSmart CMS - Construction Management System</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="/css/landing.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-hard-hat"></i>
+                <span>Build<strong>Smart</strong></span>
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="/login" class="btn btn-outline">Sign In</a>
+                <a href="/register" class="btn btn-primary">Get Started</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg">
+            <div class="hero-overlay"></div>
+            <div class="construction-silhouette"></div>
+            <div class="gradient-orbs">
+                <div class="orb orb-1"></div>
+                <div class="orb orb-2"></div>
+            </div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-text" data-aos="fade-right" data-aos-duration="1000">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span class="badge-text">Trusted by 500+ Construction Companies</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-line">Build Smarter.</span>
+                    <span class="title-line">Manage <span class="highlight">Better.</span></span>
+                </h1>
+                <p class="hero-description">
+                    The construction management platform that transforms chaos into clarity.
+                    Track projects, manage teams, control budgets—all in one powerful system.
+                </p>
+                <div class="hero-buttons">
+                    <a href="/login" class="btn btn-primary btn-lg btn-hover-lift">
+                        Start Free Trial
+                        <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                    </a>
+                    <a href="#about" class="btn btn-glass btn-lg">
+                        <span class="btn-icon-left"><i class="fas fa-play"></i></span>
+                        Watch Demo
+                    </a>
+                </div>
+                <div class="hero-trust">
+                    <div class="trust-avatars">
+                        <div class="avatar"></div>
+                        <div class="avatar"></div>
+                        <div class="avatar"></div>
+                        <div class="avatar avatar-more">+10K</div>
+                    </div>
+                    <div class="trust-text">
+                        <div class="trust-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.9/5</span>
+                        </div>
+                        <p>from 2,340+ reviews</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual" data-aos="fade-left" data-aos-duration="1000">
+                <div class="visual-card card-1">
+                    <div class="card-header">
+                        <div class="status-dot status-active"></div>
+                        <span>Live Projects</span>
+                    </div>
+                    <div class="card-value">524</div>
+                    <div class="card-trend positive">↑ 12% this month</div>
+                </div>
+                <div class="visual-card card-2">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Team Members</span>
+                        <span class="card-count">1,248</span>
+                    </div>
+                </div>
+                <div class="visual-card card-3">
+                    <div class="progress-ring">
+                        <svg width="80" height="80">
+                            <circle cx="40" cy="40" r="36" />
+                            <circle cx="40" cy="40" r="36" />
+                        </svg>
+                        <span class="progress-value">94%</span>
+                    </div>
+                    <span class="card-label">On-Time Delivery</span>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span>Scroll to explore</span>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image" data-aos="fade-right">
+                    <div class="about-img-wrapper">
+                        <div class="about-badge">
+                            <i class="fas fa-check-circle"></i>
+                            <span>20+ Years Experience</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-content" data-aos="fade-left">
+                    <span class="section-label">Who We Are</span>
+                    <h2 class="section-title">
+                        Building the Future of <span class="highlight">Construction Management</span>
+                    </h2>
+                    <p class="section-description">
+                        BuildSmart CMS is a comprehensive construction management system designed to streamline 
+                        every aspect of your construction business. From project planning to workforce management, 
+                        we've got you covered.
+                    </p>
+                    <ul class="feature-list">
+                        <li>
+                            <i class="fas fa-check"></i>
+                            <span>Real-time project tracking and monitoring</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check"></i>
+                            <span>Advanced workforce and attendance management</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check"></i>
+                            <span>Comprehensive financial tracking and budgeting</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check"></i>
+                            <span>Mobile-friendly interface for on-site access</span>
+                        </li>
+                    </ul>
+                    <a href="/register" class="btn btn-primary">
+                        Get Started Today <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="construction-bg"></div>
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-label">Our Services</span>
+                <h2 class="section-title">Comprehensive Construction Solutions</h2>
+                <p class="section-description">
+                    Everything you need to manage your construction business efficiently
+                </p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-number">01</div>
+                    <div class="service-icon">
+                        <i class="fas fa-project-diagram"></i>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3>Project Management</h3>
+                    <p>Plan, track, and deliver projects on time and within budget with powerful project management tools.</p>
+                    <a href="#" class="service-link">
+                        <span>Learn More</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-number">02</div>
+                    <div class="service-icon">
+                        <i class="fas fa-users"></i>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3>Team Management</h3>
+                    <p>Efficiently manage your workforce with attendance tracking, task assignments, and performance monitoring.</p>
+                    <a href="#" class="service-link">
+                        <span>Learn More</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-number">03</div>
+                    <div class="service-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3>Financial Control</h3>
+                    <p>Track expenses, manage budgets, and generate detailed financial reports with ease.</p>
+                    <a href="#" class="service-link">
+                        <span>Learn More</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-number">04</div>
+                    <div class="service-icon">
+                        <i class="fas fa-tasks"></i>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3>Task Tracking</h3>
+                    <p>Assign, monitor, and complete tasks efficiently with our intuitive task management system.</p>
+                    <a href="#" class="service-link">
+                        <span>Learn More</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-number">05</div>
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3>Analytics & Reports</h3>
+                    <p>Get insights into your business with comprehensive analytics and customizable reports.</p>
+                    <a href="#" class="service-link">
+                        <span>Learn More</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-number">06</div>
+                    <div class="service-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3>Mobile Access</h3>
+                    <p>Access your projects and data from anywhere with our mobile-responsive platform.</p>
+                    <a href="#" class="service-link">
+                        <span>Learn More</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features/Why Choose Us Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-label">Why Choose Us</span>
+                <h2 class="section-title">Built for <span class="highlight">Modern Construction</span></h2>
+                <p class="section-description">
+                    Experience the difference with our cutting-edge features and industry-leading support
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" data-aos="flip-left" data-aos-delay="100">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure & Reliable</h3>
+                    <p>Enterprise-grade security with 99.9% uptime guarantee. Your data is always safe and accessible.</p>
+                </div>
+                <div class="feature-card" data-aos="flip-left" data-aos-delay="200">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Round-the-clock customer support to help you whenever you need assistance with our platform.</p>
+                </div>
+                <div class="feature-card" data-aos="flip-left" data-aos-delay="300">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3>Real-Time Updates</h3>
+                    <p>Stay informed with instant notifications and real-time synchronization across all devices.</p>
+                </div>
+                <div class="feature-card" data-aos="flip-left" data-aos-delay="100">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <h3>Easy Integration</h3>
+                    <p>Seamlessly integrate with your existing tools and workflows for maximum efficiency.</p>
+                </div>
+                <div class="feature-card" data-aos="flip-left" data-aos-delay="200">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Optimized performance ensures you can work without delays, even with large datasets.</p>
+                </div>
+                <div class="feature-card" data-aos="flip-left" data-aos-delay="300">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h3>User Friendly</h3>
+                    <p>Intuitive interface designed for construction professionals of all technical levels.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content" data-aos="zoom-in">
+                <h2>Ready to Transform Your Construction Business?</h2>
+                <p>Join thousands of construction professionals who trust BuildSmart CMS</p>
+                <div class="cta-buttons">
+                    <a href="/register" class="btn btn-white btn-lg">
+                        <i class="fas fa-rocket"></i> Start Free Trial
+                    </a>
+                    <a href="#contact" class="btn btn-outline-white btn-lg">
+                        <i class="fas fa-phone"></i> Contact Sales
+                    </a>
+                </div>
+                <p class="cta-note">
+                    <i class="fas fa-check-circle"></i> No credit card required · 14-day free trial · Cancel anytime
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info" data-aos="fade-right">
+                    <span class="section-label">Get In Touch</span>
+                    <h2 class="section-title">Let's Build Something <span class="highlight">Great Together</span></h2>
+                    <p class="section-description">
+                        Have questions? Our team is here to help you get started with BuildSmart CMS.
+                    </p>
+                    <div class="contact-items">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4>Visit Us</h4>
+                                <p>123 Construction Ave, Business District</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <h4>Call Us</h4>
+                                <p>+1 (555) 123-4567</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4>Email Us</h4>
+                                <p>info@buildsmart.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form" data-aos="fade-left">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" placeholder="Your Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" placeholder="Your Email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Subject">
+                        </div>
+                        <div class="form-group">
+                            <textarea rows="5" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            Send Message <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <div class="footer-logo">
+                            <i class="fas fa-hard-hat"></i>
+                            <span>Build<strong>Smart</strong></span>
+                        </div>
+                        <p>The leading construction management platform trusted by professionals worldwide.</p>
+                        <div class="footer-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#about">About Us</a></li>
+                            <li><a href="#services">Services</a></li>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Case Studies</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Cookie Policy</a></li>
+                            <li><a href="#">GDPR</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 BuildSmart CMS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="/js/landing.js"></script>
+</body>
+</html>

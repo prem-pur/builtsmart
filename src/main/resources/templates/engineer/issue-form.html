@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Issue - BuildSmart CMS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap / Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Shared Manager Theme -->
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <div th:replace="~{fragments/sidebar :: engineerSidebar(user=${user}, activePage='issues')}"></div>
+        <main class="stack">
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1"><i class="fas fa-exclamation-triangle me-2"></i>Report New Issue</h4>
+                        <p class="text-muted mb-0">Document site issues and problems</p>
+                    </div>
+                    <a href="/engineer/issues" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <form th:action="@{/engineer/issues}" th:object="${issue}" method="post">
+                    <div class="mb-3">
+                        <label for="project" class="form-label fw-semibold">Project *</label>
+                        <select class="form-select" id="project" name="project.id" required>
+                            <option value="">Select Project</option>
+                            <option th:each="project : ${projects}"
+                                    th:value="${project.id}"
+                                    th:text="${project.name}">Project Name</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-semibold">Issue Description *</label>
+                        <textarea class="form-control" id="description" th:field="*{description}"
+                                  rows="5" required placeholder="Describe the issue in detail..."></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="location" class="form-label fw-semibold">Location</label>
+                                <input type="text" class="form-control" id="location" th:field="*{location}"
+                                       placeholder="Specific location where issue occurred">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="weather" class="form-label fw-semibold">Weather Conditions</label>
+                                <input type="text" class="form-control" id="weather" th:field="*{weather}"
+                                       placeholder="Weather at time of issue">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="photoUrl" class="form-label fw-semibold">Photo URL</label>
+                        <input type="url" class="form-control" id="photoUrl" th:field="*{photoUrl}"
+                               placeholder="https://example.com/issue-photo.jpg">
+                        <div class="form-text">Optional: URL to a photo documenting the issue</div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> This issue will be reported as an ISSUE_REPORT type log and will be visible to project managers.
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="/engineer/issues" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-exclamation-triangle me-1"></i> Report Issue
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

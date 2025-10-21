@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Reminder Details - BuildSmart CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <div th:replace="~{fragments/sidebar :: financeSidebar(user=${user}, activePage='reminders')}"></div>
+        <main class="stack">
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1"><i class="fas fa-bell me-2"></i>Payment Reminder Details</h4>
+                        <p class="text-muted mb-0">Due: <span th:text="${#temporals.format(reminder.dueDate, 'MMMM dd, yyyy')}">Date</span></p>
+                    </div>
+                    <div>
+                        <a th:href="@{/finance/reminders/{id}/edit(id=${reminder.id})}" class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                        <a href="/finance/reminders" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-info-circle me-1"></i> Reminder Information</h5>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            <p th:text="${reminder.description}">Description</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Amount</label>
+                                <p class="fs-4 text-primary mb-0">
+                                    LKR <span th:text="${#numbers.formatDecimal(reminder.amount, 0, 'COMMA', 2, 'POINT')}">0</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Priority</label>
+                                <p>
+                                    <span th:class="${reminder.priority.toString() == 'URGENT' ? 'badge danger' : 
+                                                   reminder.priority.toString() == 'HIGH' ? 'badge warning' : 
+                                                   reminder.priority.toString() == 'MEDIUM' ? 'badge info' :
+                                                   'badge secondary'}"
+                                          th:text="${reminder.priority}">Priority</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Recipient</label>
+                                <p th:text="${reminder.recipient ?: 'Not specified'}">Recipient</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Contact</label>
+                                <p th:text="${reminder.recipientContact ?: 'Not specified'}">Contact</p>
+                            </div>
+                        </div>
+
+                        <div th:if="${reminder.notes}" class="mb-3">
+                            <label class="form-label fw-semibold">Notes</label>
+                            <p th:text="${reminder.notes}">Notes</p>
+                        </div>
+
+                        <div th:if="${reminder.expense}" class="mb-3">
+                            <label class="form-label fw-semibold">Related Expense</label>
+                            <p>
+                                <span th:text="${reminder.expense.description}">Expense</span>
+                                <span class="text-muted"> - LKR <span th:text="${#numbers.formatDecimal(reminder.expense.amount, 0, 'COMMA', 2, 'POINT')}">0</span></span>
+                            </p>
+                        </div>
+
+                        <!-- Client Submitted Reminder Info -->
+                        <div th:if="${reminder.isClientSubmitted}" class="alert alert-info">
+                            <i class="fas fa-user me-2"></i>
+                            <strong>Client Submitted Request</strong>
+                            <div class="mt-2">
+                                <small>
+                                    <strong>Client:</strong> <span th:text="${reminder.clientName}">Name</span><br>
+                                    <strong>Email:</strong> <span th:text="${reminder.clientEmail}">Email</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Response Section for Client-Submitted Reminders -->
+                    <div th:if="${reminder.isClientSubmitted}" class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-reply me-1"></i> Respond to Client</h5>
+                        </div>
+                        <form th:action="@{/finance/reminders/{id}/respond(id=${reminder.id})}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Response Message</label>
+                                <textarea class="form-control" name="responseText" rows="5" 
+                                          placeholder="Write your response to the client..." 
+                                          th:text="${reminder.responseText}" required></textarea>
+                            </div>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-paper-plane me-1"></i> Send Response
+                            </button>
+                        </form>
+                        <div class="mt-3" th:if="${reminder.respondedAt}">
+                            <small class="text-muted">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Last responded at <span th:text="${#temporals.format(reminder.respondedAt, 'dd MMM yyyy HH:mm')}">date</span> 
+                                by <span th:text="${reminder.respondedBy}">Officer</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-list me-1"></i> Details</h5>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Project</label>
+                            <p th:text="${reminder.project?.name}">Project Name</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <p>
+                                <span th:class="${reminder.status.toString() == 'PAID' ? 'badge success' : 
+                                               reminder.status.toString() == 'OVERDUE' ? 'badge danger' : 
+                                               reminder.status.toString() == 'CANCELLED' ? 'badge secondary' :
+                                               'badge warning'}"
+                                      th:text="${reminder.status}">Status</span>
+                            </p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Due Date</label>
+                            <p>
+                                <span th:text="${#temporals.format(reminder.dueDate, 'MMM dd, yyyy')}">Date</span>
+                                <span th:if="${reminder.dueDate.isBefore(T(java.time.LocalDate).now()) && reminder.status.toString() == 'PENDING'}" 
+                                      class="badge danger ms-1">Overdue</span>
+                            </p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Created By</label>
+                            <p th:text="${reminder.createdBy?.name}">User Name</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Created At</label>
+                            <p th:text="${#temporals.format(reminder.createdAt, 'MMM dd, yyyy HH:mm')}">Date</p>
+                        </div>
+
+                        <div th:if="${reminder.paidBy}" class="mb-3">
+                            <label class="form-label fw-semibold">Paid By</label>
+                            <p th:text="${reminder.paidBy?.name}">User</p>
+                        </div>
+
+                        <div th:if="${reminder.paidAt}" class="mb-3">
+                            <label class="form-label fw-semibold">Paid At</label>
+                            <p th:text="${#temporals.format(reminder.paidAt, 'MMM dd, yyyy HH:mm')}">Date</p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Submission Details -->
+                    <div th:if="${reminder.paymentSubmitted != null && reminder.paymentSubmitted}" class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-receipt me-1"></i> Payment Submission</h5>
+                        </div>
+                        <div class="alert" th:classappend="${reminder.paymentConfirmed != null && reminder.paymentConfirmed ? 'alert-success' : 'alert-warning'}">
+                            <i th:class="${(reminder.paymentConfirmed != null && reminder.paymentConfirmed ? 'fas fa-check-circle' : 'fas fa-clock') + ' me-2'}"></i>
+                            <strong th:text="${reminder.paymentConfirmed != null && reminder.paymentConfirmed ? 'Payment Confirmed' : 'Awaiting Confirmation'}">Status</strong>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Payment Method</label>
+                            <p th:text="${reminder.paymentMethod}">Method</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Transaction ID</label>
+                            <p class="font-monospace" th:text="${reminder.transactionId}">Transaction ID</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Submitted At</label>
+                            <p th:text="${#temporals.format(reminder.paymentSubmittedAt, 'dd MMM yyyy HH:mm')}">Date</p>
+                        </div>
+
+                        <div th:if="${reminder.paymentNotes}" class="mb-3">
+                            <label class="form-label fw-semibold">Payment Notes</label>
+                            <p th:text="${reminder.paymentNotes}">Notes</p>
+                        </div>
+
+                        <div th:if="${reminder.paymentConfirmed != null && reminder.paymentConfirmed}" class="mb-3">
+                            <label class="form-label fw-semibold">Confirmed By</label>
+                            <p th:text="${reminder.paymentConfirmedBy}">Officer</p>
+                            <small class="text-muted">
+                                on <span th:text="${#temporals.format(reminder.paymentConfirmedAt, 'dd MMM yyyy HH:mm')}">Date</span>
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="d-grid gap-2">
+                            <form th:if="${reminder.paymentSubmitted != null && reminder.paymentSubmitted && (reminder.paymentConfirmed == null || !reminder.paymentConfirmed)}" 
+                                  th:action="@{/finance/reminders/{id}/confirm-payment(id=${reminder.id})}" method="post"
+                                  onsubmit="return confirm('Are you sure you want to confirm this payment? This action cannot be undone.')">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-check-double me-1"></i> Confirm Payment
+                                </button>
+                            </form>
+                            <form th:if="${(reminder.paymentSubmitted == null || !reminder.paymentSubmitted) && reminder.status.toString() != 'PAID' && reminder.status.toString() != 'CANCELLED'}" 
+                                  th:action="@{/finance/reminders/{id}/mark-paid(id=${reminder.id})}" method="post">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-check me-1"></i> Mark as Paid
+                                </button>
+                            </form>
+                            <form th:action="@{/finance/reminders/{id}/delete(id=${reminder.id})}" method="post"
+                                  onsubmit="return confirm('Are you sure you want to delete this reminder?')">
+                                <button type="submit" class="btn btn-danger w-100">
+                                    <i class="fas fa-trash me-1"></i> Delete Reminder
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

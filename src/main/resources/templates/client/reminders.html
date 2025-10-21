@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Reminders - BuildSmart CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
+    <style>
+        .payment-card {
+            border-left: 4px solid #0d6efd;
+            transition: transform 0.2s;
+        }
+        .payment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .payment-card.overdue {
+            border-left-color: #dc3545;
+        }
+        .payment-card.awaiting {
+            border-left-color: #ffc107;
+        }
+        .payment-card.paid {
+            border-left-color: #198754;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div th:replace="~{fragments/sidebar :: clientSidebar(user=${user}, activePage='reminders')}"></div>
+        <main class="stack">
+            <!-- Header -->
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1"><i class="fas fa-bell me-2"></i>Payment Reminders</h4>
+                        <p class="text-muted mb-0">View and pay your pending payment reminders from finance officer</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Alert -->
+            <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Payment Submitted Successfully!</strong> Your payment is awaiting confirmation from the finance officer.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(reminders)}" class="card text-center py-5">
+                <i class="fas fa-bell-slash fa-4x text-muted mb-3"></i>
+                <h5>No Payment Reminders</h5>
+                <p class="text-muted">You don't have any pending payment reminders at the moment.</p>
+            </div>
+
+            <!-- Payment Reminder Cards -->
+            <div class="row g-3">
+                <div th:each="reminder : ${reminders}" class="col-md-6">
+                    <div class="card payment-card" 
+                         th:classappend="${reminder.dueDate.isBefore(T(java.time.LocalDate).now()) && reminder.status.name() == 'PENDING' ? ' overdue' : 
+                                         reminder.status.name() == 'AWAITING_CONFIRMATION' ? ' awaiting' : 
+                                         reminder.status.name() == 'PAID' ? ' paid' : ''}">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="mb-1" th:text="${reminder.project.name}">Project Name</h5>
+                                <p class="text-muted small mb-0" th:text="${reminder.project.location}">Location</p>
+                            </div>
+                            <span class="badge" 
+                                  th:classappend="${reminder.status.name() == 'PAID' ? ' success' : 
+                                                  (reminder.paymentSubmitted != null && reminder.paymentSubmitted && (reminder.paymentConfirmed == null || !reminder.paymentConfirmed)) ? ' warning text-dark' :
+                                                  reminder.dueDate.isBefore(T(java.time.LocalDate).now()) ? ' danger' : ' info'}"
+                                  th:text="${reminder.status.name() == 'PAID' ? 'PAID' : 
+                                           (reminder.paymentSubmitted != null && reminder.paymentSubmitted && (reminder.paymentConfirmed == null || !reminder.paymentConfirmed)) ? 'AWAITING CONFIRMATION' :
+                                           reminder.dueDate.isBefore(T(java.time.LocalDate).now()) ? 'OVERDUE' : 'PENDING'}">Status</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="text-muted small">Description</div>
+                            <p class="mb-0" th:text="${reminder.description}">Payment description</p>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <div class="text-muted small">Amount</div>
+                                <h4 class="mb-0 text-primary">LKR <span th:text="${#numbers.formatDecimal(reminder.amount, 0, 'COMMA', 2, 'POINT')}">0</span></h4>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-muted small">Due Date</div>
+                                <strong th:text="${#temporals.format(reminder.dueDate, 'dd MMM yyyy')}">Date</strong>
+                                <span th:if="${reminder.dueDate.isBefore(T(java.time.LocalDate).now()) && reminder.status.name() == 'PENDING'}" 
+                                      class="badge danger ms-1 small">Overdue</span>
+                            </div>
+                        </div>
+
+                        <div th:if="${reminder.recipient}" class="mb-3">
+                            <div class="text-muted small">Recipient</div>
+                            <p class="mb-0" th:text="${reminder.recipient}">Recipient</p>
+                            <small th:if="${reminder.recipientContact}" class="text-muted" th:text="${reminder.recipientContact}">Contact</small>
+                        </div>
+
+                        <div th:if="${reminder.notes}" class="mb-3">
+                            <div class="text-muted small">Notes</div>
+                            <p class="mb-0 small" th:text="${reminder.notes}">Notes</p>
+                        </div>
+
+                        <!-- Payment Submission Info -->
+                        <div th:if="${reminder.paymentSubmitted != null && reminder.paymentSubmitted}" class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Payment Submitted</strong><br>
+                            <small>
+                                Method: <span th:text="${reminder.paymentMethod}">Method</span> | 
+                                Transaction ID: <span th:text="${reminder.transactionId}">ID</span><br>
+                                Submitted on: <span th:text="${#temporals.format(reminder.paymentSubmittedAt, 'dd MMM yyyy HH:mm')}">Date</span>
+                            </small>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2">
+                            <a th:if="${reminder.status.name() != 'PAID' && (reminder.paymentSubmitted == null || !reminder.paymentSubmitted)}" 
+                               th:href="@{/client/payment-portal/{id}(id=${reminder.id})}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-credit-card me-1"></i>Pay Now
+                            </a>
+                            <button th:if="${reminder.paymentSubmitted != null && reminder.paymentSubmitted && (reminder.paymentConfirmed == null || !reminder.paymentConfirmed)}" 
+                                    class="btn btn-warning" disabled>
+                                <i class="fas fa-clock me-1"></i>Awaiting Confirmation
+                            </button>
+                            <button th:if="${reminder.status.name() == 'PAID'}" 
+                                    class="btn btn-success" disabled>
+                                <i class="fas fa-check-circle me-1"></i>Paid
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

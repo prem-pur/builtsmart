@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees - BuildSmart CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <div th:replace="~{fragments/sidebar :: hrSidebar(user=${user}, activePage='employees')}"></div>
+        <main class="stack">
+            <!-- Header -->
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1"><i class="fas fa-users me-2"></i>Employees</h4>
+                        <p class="text-muted mb-0">View and manage all employees</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEmployeeModal">
+                        <i class="fas fa-plus me-2"></i>New Employee
+                    </button>
+                </div>
+            </div>
+
+            <!-- Employees List -->
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="employee : ${employees}">
+                                <td>
+                                    <strong th:text="${employee.name}">Name</strong>
+                                </td>
+                                <td th:text="${employee.email}">Email</td>
+                                <td th:text="${employee.phone != null ? employee.phone : '-'}">Phone</td>
+                                <td th:text="${employee.department != null ? employee.department : '-'}">Department</td>
+                                <td>
+                                    <span class="badge secondary" th:text="${employee.role}">Role</span>
+                                </td>
+                                <td>
+                                    <span th:if="${employee.active}" class="badge success">Active</span>
+                                    <span th:unless="${employee.active}" class="badge danger">Inactive</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                data-bs-toggle="modal" 
+                                                th:data-bs-target="'#editEmployeeModal' + ${employee.id}"
+                                                title="Edit Employee">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info" 
+                                                data-bs-toggle="modal" 
+                                                th:data-bs-target="'#updateRoleModal' + ${employee.id}"
+                                                title="Update Role">
+                                            <i class="fas fa-user-tag"></i>
+                                        </button>
+                                        <button th:if="${employee.active}"
+                                                class="btn btn-sm btn-outline-danger" 
+                                                data-bs-toggle="modal" 
+                                                th:data-bs-target="'#deleteEmployeeModal' + ${employee.id}"
+                                                title="Deactivate">
+                                            <i class="fas fa-user-slash"></i>
+                                        </button>
+                                        <form th:unless="${employee.active}"
+                                              th:action="@{/hr/employees/{id}/activate(id=${employee.id})}" 
+                                              method="post" 
+                                              class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Activate">
+                                                <i class="fas fa-user-check"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Employee Modal -->
+    <div class="modal fade" id="createEmployeeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Create New Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/hr/employees/create}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name *</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password *</label>
+                            <input type="password" class="form-control" name="password" required minlength="6">
+                            <small class="text-muted">Minimum 6 characters</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role *</label>
+                            <select class="form-select" name="role" required>
+                                <option value="">Select Role</option>
+                                <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" class="form-control" name="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <input type="text" class="form-control" name="department">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" name="address" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Employee</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Employee Modals (one for each employee) -->
+    <div th:each="employee : ${employees}" class="modal fade" th:id="'editEmployeeModal' + ${employee.id}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/hr/employees/{id}/update(id=${employee.id})}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name *</label>
+                            <input type="text" class="form-control" name="name" th:value="${employee.name}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-control" name="email" th:value="${employee.email}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" class="form-control" name="phone" th:value="${employee.phone}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <input type="text" class="form-control" name="department" th:value="${employee.department}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" name="address" rows="2" th:text="${employee.address}"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Role Modals (one for each employee) -->
+    <div th:each="employee : ${employees}" class="modal fade" th:id="'updateRoleModal' + ${employee.id}" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-tag me-2"></i>Update Role</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/hr/employees/{id}/update-role(id=${employee.id})}" method="post">
+                    <div class="modal-body">
+                        <p><strong>Employee:</strong> <span th:text="${employee.name}"></span></p>
+                        <p><strong>Current Role:</strong> <span class="badge bg-secondary" th:text="${employee.role}"></span></p>
+                        <div class="mb-3">
+                            <label class="form-label">New Role *</label>
+                            <select class="form-select" name="role" required>
+                                <option th:each="role : ${roles}" 
+                                        th:value="${role}" 
+                                        th:text="${role}"
+                                        th:selected="${role == employee.role}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Role</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Employee Modals (one for each employee) -->
+    <div th:each="employee : ${employees}" class="modal fade" th:id="'deleteEmployeeModal' + ${employee.id}" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Deactivate Employee</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/hr/employees/{id}/delete(id=${employee.id})}" method="post">
+                    <div class="modal-body">
+                        <p>Are you sure you want to deactivate this employee?</p>
+                        <p><strong th:text="${employee.name}"></strong></p>
+                        <p class="text-muted small">The employee will be deactivated and will not be able to access the system. You can reactivate them later.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Deactivate</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

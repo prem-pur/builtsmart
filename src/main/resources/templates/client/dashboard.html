@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - BuildSmart CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/manager-dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <div th:replace="~{fragments/sidebar :: clientSidebar(user=${user}, activePage='dashboard')}"></div>
+        <main class="stack">
+            <!-- Header -->
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1">Welcome back, <span th:text="${user.name}">Client</span>!</h4>
+                        <p class="text-muted mb-0">Here's an overview of your projects and activities</p>
+                    </div>
+                    <div>
+                        <a href="/client/payments" class="btn btn-primary">
+                            <i class="fas fa-credit-card me-1"></i> View Payments
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stat-label">Total Projects</div>
+                                <div class="stat-value" th:text="${totalProjects}">0</div>
+                            </div>
+                            <div class="stat-icon primary">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stat-label">In Progress</div>
+                                <div class="stat-value" th:text="${inProgressProjects}">0</div>
+                            </div>
+                            <div class="stat-icon info">
+                                <i class="fas fa-spinner"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stat-label">Completed</div>
+                                <div class="stat-value" th:text="${completedProjects}">0</div>
+                            </div>
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stat-label">Pending Payments</div>
+                                <div class="stat-value" th:text="${pendingPaymentsCount}">0</div>
+                                <span th:if="${overduePayments > 0}" class="badge danger mt-1">
+                                    <span th:text="${overduePayments}">0</span> Overdue
+                                </span>
+                            </div>
+                            <div class="stat-icon warning">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="section-title">
+                    <h5><i class="fas fa-bolt me-1"></i> Quick Actions</h5>
+                </div>
+                <div class="row g-2">
+                    <div class="col-md-3 col-6">
+                        <a href="/client/projects" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-project-diagram me-1"></i> My Projects
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="/client/payments" class="btn btn-outline-success w-100">
+                            <i class="fas fa-credit-card me-1"></i> Payments
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="/client/reminders" class="btn btn-outline-info w-100">
+                            <i class="fas fa-history me-1"></i> History
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="/client/inquiries" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-envelope me-1"></i> Inquiries
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Projects & Recent Activities -->
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-tasks me-1"></i> Active Projects</h5>
+                        </div>
+                        <div th:if="${#lists.isEmpty(activeProjects)}" class="text-center py-4 text-muted">
+                            <i class="fas fa-folder-open fa-3x mb-3"></i>
+                            <p>No active projects at the moment</p>
+                        </div>
+                        <div th:each="project, projectStat : ${activeProjects}" class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong th:text="${project.name}">Project Name</strong>
+                                    <div class="text-muted small">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        <span th:text="${project.location}">Location</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge" th:classappend="${project.status.toString() == 'IN_PROGRESS' ? ' info' : ' secondary'}" 
+                                          th:text="${project.status}">Status</span>
+                                    <div class="text-muted small mt-1">
+                                        <span th:text="${project.completionPercentage != null ? project.completionPercentage : 0}">0</span>% Complete
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-primary" 
+                                     role="progressbar"
+                                     th:style="'width: ' + ${project.completionPercentage != null ? project.completionPercentage : 0} + '%'"
+                                     th:text="${project.completionPercentage != null ? project.completionPercentage : 0} + '%'">
+                                    0%
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a th:href="@{/client/projects/{id}(id=${project.id})}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>View Details
+                                </a>
+                            </div>
+                            <hr th:if="${!projectStat.last}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="section-title">
+                            <h5><i class="fas fa-history me-1"></i> Recent Activities</h5>
+                        </div>
+                        <div th:if="${#lists.isEmpty(recentActivities)}" class="text-center py-4 text-muted">
+                            <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                            <p class="small">No recent activities</p>
+                        </div>
+                        <div class="activity-feed">
+                            <div th:each="log : ${recentActivities}" class="activity-item">
+                                <div class="activity-icon" th:classappend="${log.type.toString() == 'PROGRESS_UPDATE' ? ' bg-primary' : 
+                                                                          log.type.toString() == 'ISSUE' ? ' bg-danger' : 
+                                                                          log.type.toString() == 'MILESTONE' ? ' bg-success' : ' bg-info'}">
+                                    <i th:class="${log.type.toString() == 'PROGRESS_UPDATE' ? 'fas fa-tasks' : 
+                                                 log.type.toString() == 'ISSUE' ? 'fas fa-exclamation-triangle' : 
+                                                 log.type.toString() == 'MILESTONE' ? 'fas fa-flag' : 'fas fa-info-circle'}"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title" th:text="${log.description}">Activity Description</div>
+                                    <div class="activity-meta">
+                                        <span th:text="${log.project.name}">Project</span>
+                                        <span class="mx-1">•</span>
+                                        <span th:text="${#temporals.format(log.createdAt, 'dd MMM yyyy')}">Date</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
